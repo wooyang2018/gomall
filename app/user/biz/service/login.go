@@ -17,16 +17,19 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
-	user "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal/mysql"
+	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 )
 
 type LoginService struct {
 	ctx context.Context
-} // NewLoginService new LoginService
+}
+
+// NewLoginService new LoginService
 func NewLoginService(ctx context.Context) *LoginService {
 	return &LoginService{ctx: ctx}
 }
