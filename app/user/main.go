@@ -18,22 +18,26 @@ import (
 	"net"
 	"strings"
 
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
+	"gopkg.in/natefinch/lumberjack.v2"
+
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal"
 	"github.com/cloudwego/biz-demo/gomall/app/user/conf"
 	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/biz-demo/gomall/common/serversuite"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user/userservice"
-	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/cloudwego/kitex/server"
-	"github.com/joho/godotenv"
-	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
-	_ = godotenv.Load()
+	err := godotenv.Load(".env.example")
+	if err != nil {
+		klog.Fatalf("load env failed: %v", err)
+	}
 
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
@@ -48,7 +52,7 @@ func main() {
 
 	svr := userservice.NewServer(new(UserServiceImpl), opts...)
 
-	err := svr.Run()
+	err = svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
 	}

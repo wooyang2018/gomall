@@ -18,23 +18,25 @@ import (
 	"net"
 	"strings"
 
-	"github.com/cloudwego/biz-demo/gomall/common/serversuite"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/cloudwego/biz-demo/gomall/common/serversuite"
+
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 
 	"github.com/cloudwego/biz-demo/gomall/app/order/biz/dal"
 	"github.com/cloudwego/biz-demo/gomall/app/order/conf"
 	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order/orderservice"
-	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/cloudwego/kitex/server"
-	"github.com/joho/godotenv"
 )
 
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
-	_ = godotenv.Load()
+	_ = godotenv.Load(".env.example")
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
 		MaxSize:    conf.GetConf().Kitex.LogMaxSize,

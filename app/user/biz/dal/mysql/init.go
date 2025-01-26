@@ -18,10 +18,11 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/app/user/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
+	"github.com/cloudwego/biz-demo/gomall/app/user/conf"
 )
 
 var (

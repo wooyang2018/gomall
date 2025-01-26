@@ -83,6 +83,10 @@ gen-order-client:
 watch-frontend:
 	@cd app/frontend && air
 
+.PHONY: watch-svc
+watch-svc:
+	@cd app/${svc} && air
+
 .PHONY: tidy
 tidy: ## run `go mod tidy` for all go module
 	@scripts/tidy.sh

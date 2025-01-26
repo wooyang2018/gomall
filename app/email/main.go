@@ -21,22 +21,23 @@ import (
 	"github.com/joho/godotenv"
 	"gopkg.in/natefinch/lumberjack.v2"
 
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/cloudwego/kitex/server"
+	"github.com/kitex-contrib/obs-opentelemetry/provider"
+
 	"github.com/cloudwego/biz-demo/gomall/app/email/biz/consumer"
 	"github.com/cloudwego/biz-demo/gomall/app/email/conf"
 	"github.com/cloudwego/biz-demo/gomall/app/email/infra/mq"
 	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email/emailservice"
-	"github.com/cloudwego/kitex/pkg/klog"
-	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	"github.com/cloudwego/kitex/server"
-	"github.com/kitex-contrib/obs-opentelemetry/provider"
 )
 
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
-	_ = godotenv.Load()
+	_ = godotenv.Load(".env.example")
 	opts := kitexInit()
 
 	mtl.InitLog(&lumberjack.Logger{

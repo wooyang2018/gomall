@@ -18,20 +18,30 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
+
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
 )
 
+// GlobalAuth 是一个全局认证中间件，用于检查用户是否已登录。
+// 如果用户已登录，它将用户ID存储在上下文中，以便后续处理程序可以访问。
+// 如果用户未登录，它将继续执行下一个处理程序。
 func GlobalAuth() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
+		// 获取当前请求的会话
 		session := sessions.Default(c)
+		// 从会话中获取用户ID
 		userId := session.Get("user_id")
+		// 如果用户ID为空，说明用户未登录
 		if userId == nil {
+			// 继续执行下一个处理程序
 			c.Next(ctx)
 			return
 		}
+		// 如果用户已登录，将用户ID存储在上下文中
 		ctx = context.WithValue(ctx, utils.UserIdKey, userId)
+		// 继续执行下一个处理程序
 		c.Next(ctx)
 	}
 }
