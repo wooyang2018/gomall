@@ -19,7 +19,7 @@ import (
 	"testing"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
-	//"github.com/cloudwego/hertz/pkg/common/test/assert"
+	"github.com/cloudwego/hertz/pkg/common/test/assert"
 	"github.com/cloudwego/hertz/pkg/common/ut"
 )
 
@@ -34,8 +34,8 @@ func TestGetProduct(t *testing.T) {
 	t.Log(string(resp.Body()))
 
 	// todo edit your unit test.
-	// assert.DeepEqual(t, 200, resp.StatusCode())
-	// assert.DeepEqual(t, "null", string(resp.Body()))
+	assert.DeepEqual(t, 200, resp.StatusCode())
+	assert.DeepEqual(t, "null", string(resp.Body()))
 }
 
 func TestSearchProducs(t *testing.T) {
@@ -49,6 +49,6 @@ func TestSearchProducs(t *testing.T) {
 	t.Log(string(resp.Body()))
 
 	// todo edit your unit test.
-	// assert.DeepEqual(t, 200, resp.StatusCode())
-	// assert.DeepEqual(t, "null", string(resp.Body()))
+	assert.DeepEqual(t, 200, resp.StatusCode())
+	assert.DeepEqual(t, "null", string(resp.Body()))
 }

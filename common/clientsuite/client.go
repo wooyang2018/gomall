@@ -28,23 +28,27 @@ type CommonGrpcClientSuite struct {
 	RegistryAddr       string
 }
 
+// Options 返回一个包含客户端选项的切片，用于配置Kitex客户端
 func (s CommonGrpcClientSuite) Options() []client.Option {
+	// 创建一个新的Consul解析器，用于服务发现
 	r, err := consul.NewConsulResolver(s.RegistryAddr)
 	if err != nil {
 		panic(err)
 	}
-	opts := []client.Option{
-		client.WithResolver(r),
-		client.WithMetaHandler(transmeta.ClientHTTP2Handler),
-		client.WithTransportProtocol(transport.GRPC),
-	}
 
-	opts = append(opts,
+	opts := []client.Option{
+		// 使用Consul解析器进行服务发现
+		client.WithResolver(r),
+		// 使用HTTP/2元数据处理器
+		client.WithMetaHandler(transmeta.ClientHTTP2Handler),
+		// 使用gRPC作为传输协议
+		client.WithTransportProtocol(transport.GRPC),
+		// 设置客户端基本信息，包括服务名称
 		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{
 			ServiceName: s.CurrentServiceName,
 		}),
+		// 使用链路追踪套件
 		client.WithSuite(tracing.NewClientSuite()),
-	)
-
+	}
 	return opts
 }

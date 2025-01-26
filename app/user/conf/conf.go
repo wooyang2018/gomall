@@ -104,6 +104,7 @@ func GetEnv() string {
 	return e
 }
 
+// TODO: conf.yaml中配置的LogLevel尚未生效，可配置mtl.InitLog中的LogLevel
 func LogLevel() klog.Level {
 	level := GetConf().Kitex.LogLevel
 	switch level {

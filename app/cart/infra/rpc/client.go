@@ -19,10 +19,11 @@ import (
 
 	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
 
-	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
-	cartutils "github.com/cloudwego/biz-demo/gomall/app/cart/utils"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 	"github.com/cloudwego/kitex/client"
+
+	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
+	"github.com/cloudwego/biz-demo/gomall/common/utils"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 )
 
 var (
@@ -50,5 +51,5 @@ func initProductClient() {
 	}
 
 	ProductClient, err = productcatalogservice.NewClient("product", opts...)
-	cartutils.MustHandleError(err)
+	utils.MustHandleError(err)
 }

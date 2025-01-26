@@ -45,7 +45,7 @@ import (
 )
 
 func main() {
-	_ = godotenv.Load(".env.example")
+	_ = godotenv.Load()
 
 	mtl.InitMtl()
 	rpc.InitClient()

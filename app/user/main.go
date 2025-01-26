@@ -34,10 +34,7 @@ import (
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
-	err := godotenv.Load(".env.example")
-	if err != nil {
-		klog.Fatalf("load env failed: %v", err)
-	}
+	_ = godotenv.Load()
 
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
@@ -52,7 +49,7 @@ func main() {
 
 	svr := userservice.NewServer(new(UserServiceImpl), opts...)
 
-	err = svr.Run()
+	err := svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
 	}

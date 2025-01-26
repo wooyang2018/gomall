@@ -35,7 +35,7 @@ import (
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
-	_ = godotenv.Load(".env.example")
+	_ = godotenv.Load()
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
 		MaxSize:    conf.GetConf().Kitex.LogMaxSize,

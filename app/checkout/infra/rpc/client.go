@@ -17,14 +17,15 @@ package rpc
 import (
 	"sync"
 
+	"github.com/cloudwego/kitex/client"
+
 	"github.com/cloudwego/biz-demo/gomall/app/checkout/conf"
-	checkoututils "github.com/cloudwego/biz-demo/gomall/app/checkout/utils"
 	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
+	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order/orderservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment/paymentservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
-	"github.com/cloudwego/kitex/client"
 )
 
 var (
@@ -56,20 +57,20 @@ func InitClient() {
 
 func initProductClient() {
 	ProductClient, err = productcatalogservice.NewClient("product", commonSuite)
-	checkoututils.MustHandleError(err)
+	utils.MustHandleError(err)
 }
 
 func initCartClient() {
 	CartClient, err = cartservice.NewClient("cart", commonSuite)
-	checkoututils.MustHandleError(err)
+	utils.MustHandleError(err)
 }
 
 func initPaymentClient() {
 	PaymentClient, err = paymentservice.NewClient("payment", commonSuite)
-	checkoututils.MustHandleError(err)
+	utils.MustHandleError(err)
 }
 
 func initOrderClient() {
 	OrderClient, err = orderservice.NewClient("order", commonSuite)
-	checkoututils.MustHandleError(err)
+	utils.MustHandleError(err)
 }

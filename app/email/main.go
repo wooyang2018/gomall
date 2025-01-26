@@ -37,7 +37,7 @@ import (
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
-	_ = godotenv.Load(".env.example")
+	_ = godotenv.Load()
 	opts := kitexInit()
 
 	mtl.InitLog(&lumberjack.Logger{

@@ -35,7 +35,10 @@ import (
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
-	_ = godotenv.Load(".env.example")
+	_ = godotenv.Load()
+	// gopkg.in/natefinch/lumberjack.v2 是一个用于日志滚动的 Go 语言库。
+	// 当日志文件达到指定的大小（例如 100MB）时，它会自动将当前日志文件重命名为一个
+	// 新的文件名（例如 app.log.1），并创建一个新的 app.log 文件来继续记录日志。
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
 		MaxSize:    conf.GetConf().Kitex.LogMaxSize,

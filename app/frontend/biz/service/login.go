@@ -17,12 +17,14 @@ package service
 import (
 	"context"
 
-	auth "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/auth"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	rpcuser "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
+
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/auth"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
+	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
+	"github.com/cloudwego/biz-demo/gomall/common/utils"
+	rpcuser "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 )
 
 type LoginService struct {
@@ -43,7 +45,7 @@ func (h *LoginService) Run(req *auth.LoginReq) (resp string, err error) {
 	session := sessions.Default(h.RequestContext)
 	session.Set("user_id", res.UserId)
 	err = session.Save()
-	frontendutils.MustHandleError(err)
+	utils.MustHandleError(err)
 	redirect := "/"
 	if frontendutils.ValidateNext(req.Next) {
 		redirect = req.Next

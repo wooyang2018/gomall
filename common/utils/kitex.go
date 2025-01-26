@@ -22,10 +22,3 @@ func MustHandleError(err error) {
 		klog.Fatal(err)
 	}
 }
-
-// ShouldHandleError log the error info
-func ShouldHandleError(err error) {
-	if err != nil {
-		klog.Error(err)
-	}
-}

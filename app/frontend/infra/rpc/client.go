@@ -18,21 +18,23 @@ import (
 	"context"
 	"sync"
 
+	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/circuitbreak"
+	"github.com/cloudwego/kitex/pkg/fallback"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	prometheus "github.com/kitex-contrib/monitor-prometheus"
+
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
 	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
 	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
+	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order/orderservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user/userservice"
-	"github.com/cloudwego/kitex/client"
-	"github.com/cloudwego/kitex/pkg/circuitbreak"
-	"github.com/cloudwego/kitex/pkg/fallback"
-	"github.com/cloudwego/kitex/pkg/rpcinfo"
-	prometheus "github.com/kitex-contrib/monitor-prometheus"
 )
 
 var (
@@ -93,25 +95,25 @@ func initProductClient() {
 	opts = append(opts, client.WithTracer(prometheus.NewClientTracer("", "", prometheus.WithDisableServer(true), prometheus.WithRegistry(mtl.Registry))))
 
 	ProductClient, err = productcatalogservice.NewClient("product", opts...)
-	frontendutils.MustHandleError(err)
+	utils.MustHandleError(err)
 }
 
 func initUserClient() {
 	UserClient, err = userservice.NewClient("user", commonSuite)
-	frontendutils.MustHandleError(err)
+	utils.MustHandleError(err)
 }
 
 func initCartClient() {
 	CartClient, err = cartservice.NewClient("cart", commonSuite)
-	frontendutils.MustHandleError(err)
+	utils.MustHandleError(err)
 }
 
 func initCheckoutClient() {
 	CheckoutClient, err = checkoutservice.NewClient("checkout", commonSuite)
-	frontendutils.MustHandleError(err)
+	utils.MustHandleError(err)
 }
 
 func initOrderClient() {
 	OrderClient, err = orderservice.NewClient("order", commonSuite)
-	frontendutils.MustHandleError(err)
+	utils.MustHandleError(err)
 }
