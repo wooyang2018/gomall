@@ -1,5 +1,7 @@
 module github.com/cloudwego/biz-demo/gomall/rpc_gen
 
+//生成命令：cwgo client --type RPC --service ${svc} --module github.com/cloudwego/biz-demo/gomall/rpc_gen  -I ../idl  --idl ../idl/${svc}.proto
+
 go 1.21
 
 require (
