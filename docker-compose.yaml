@@ -8,24 +8,27 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - ./db/sql/ini:/docker-entrypoint-initdb.d
+
   redis:
     image: 'redis:latest'
     ports:
       - 6379:6379
+
   consul:
     image: "hashicorp/consul:latest"
     ports:
       - "8500:8500"
     environment:
       CONSUL_BIND_INTERFACE: eth0
-  # Jaeger
+
   jaeger-all-in-one:
     container_name: jaeger-all-in-one
     image: jaegertracing/all-in-one:latest
     ports:
-      - "16686:16686"
-      - "4317:4317"
-      - "4318:4318"
+      - "16686:16686" # 此端口用于访问 Jaeger 的 Web UI。
+      - "4317:4317" # 该端口用于接收使用 gRPC 协议发送的 OpenTelemetry 追踪数据。OpenTelemetry 是一个用于生成、收集和导出遥测数据（包括追踪、指标和日志）的开源项目，很多现代应用会使用 OpenTelemetry SDK 生成追踪数据，并通过 gRPC 协议将数据发送到 Jaeger 的收集器。
+      - "4318:4318" # 这个端口用于接收使用 HTTP 协议发送的 OpenTelemetry 追踪数据。
+
   prometheus:
     image: prom/prometheus:latest
     volumes:
@@ -34,6 +37,7 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
       - "9090:9090"
+
   etcd:
     image: docker.io/bitnami/etcd:3.5
     environment:
@@ -41,6 +45,8 @@ services:
     ports:
       - 2379:2379
       - 2380:2380
+
+  #  NATS 可以用于实现消息队列的功能
   nats:
     image: nats:latest
     ports:
@@ -56,6 +62,7 @@ services:
     ports:
       - "3000:3000"
 
+  # Loki 能收集来自不同来源的日志，比如容器化应用（如 Kubernetes 集群中的 Pod）、虚拟机、物理服务器等。
   loki:
     image: grafana/loki:2.9.2
     volumes:
@@ -64,9 +71,13 @@ services:
     ports:
       - "3100:3100"
 
+  # Promtail 是 Grafana Loki 日志聚合系统的客户端，用于收集和发送日志到 Loki 服务器。
   promtail:
     image: grafana/promtail:2.9.2
-    volumes:
+    volumes: # promtail.yml 是 Promtail 的配置文件，通过挂载该文件，可以在宿主机上方便地修改配置，而无需进入容器内部。
       - ./deploy/config/promtail.yml:/etc/promtail/config.yml
+      # 通过挂载日志目录，Promtail 可以访问并收集该目录下的日志文件
       - ./app/frontend/log:/logs/frontend
+    # 每个 Docker 镜像都有一个默认的启动命令，它定义在镜像的 Dockerfile 中，通过 CMD 指令指定。
+    #    当使用 command 选项时，会覆盖镜像的默认 CMD 命令。
     command: -config.file=/etc/promtail/config.yml

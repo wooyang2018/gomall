@@ -18,16 +18,19 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/cloudwego/biz-demo/gomall/app/order/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/order/biz/model"
-	order "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+
+	"github.com/cloudwego/biz-demo/gomall/app/order/biz/dal/mysql"
+	"github.com/cloudwego/biz-demo/gomall/app/order/biz/model"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
 )
 
 type PlaceOrderService struct {
 	ctx context.Context
-} // NewPlaceOrderService new PlaceOrderService
+}
+
+// NewPlaceOrderService new PlaceOrderService
 func NewPlaceOrderService(ctx context.Context) *PlaceOrderService {
 	return &PlaceOrderService{ctx: ctx}
 }

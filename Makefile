@@ -7,7 +7,7 @@ default: help
 .PHONY: help
 #这段代码的作用是生成一个帮助文档，列出 Makefile 中的所有目标及其注释，并按照章节进行分组。
 #$(MAKEFILE_LIST) 是一个 Makefile 变量，包含当前 Makefile 的文件名
-help: ## Display this help.
+help: ## display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 ##@ Initialize Project

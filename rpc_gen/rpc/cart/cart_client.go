@@ -2,13 +2,16 @@ package cart
 
 import (
 	"context"
-	cart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
 
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart/cartservice"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
+
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/client/callopt"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart/cartservice"
 )
 
+// 实现了RPCClient接口必然实现了cartservice.Client接口
 type RPCClient interface {
 	KitexClient() cartservice.Client
 	Service() string

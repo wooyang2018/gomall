@@ -18,15 +18,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/cloudwego/kitex/pkg/klog"
+
 	"github.com/cloudwego/biz-demo/gomall/app/order/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/order/biz/model"
-	order "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
-	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
 )
 
 type MarkOrderPaidService struct {
 	ctx context.Context
-} // NewMarkOrderPaidService new MarkOrderPaidService
+}
+
+// NewMarkOrderPaidService new MarkOrderPaidService
 func NewMarkOrderPaidService(ctx context.Context) *MarkOrderPaidService {
 	return &MarkOrderPaidService{ctx: ctx}
 }

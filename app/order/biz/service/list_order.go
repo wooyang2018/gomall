@@ -17,16 +17,19 @@ package service
 import (
 	"context"
 
+	"github.com/cloudwego/kitex/pkg/klog"
+
 	"github.com/cloudwego/biz-demo/gomall/app/order/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/order/biz/model"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
-	order "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
-	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
 )
 
 type ListOrderService struct {
 	ctx context.Context
-} // NewListOrderService new ListOrderService
+}
+
+// NewListOrderService new ListOrderService
 func NewListOrderService(ctx context.Context) *ListOrderService {
 	return &ListOrderService{ctx: ctx}
 }
