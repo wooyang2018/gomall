@@ -2,20 +2,13 @@ FROM golang:1.23 AS builder
 
 WORKDIR /usr/src/gomall
 
-# Set the GOPROXY environment variable to use the goproxy.io proxy (for China)
 ENV GOPROXY=https://goproxy.cn,direct
 
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
-COPY app/frontend/go.mod app/frontend/go.sum ./app/frontend/
-COPY rpc_gen rpc_gen
-COPY common common
+COPY ./ /usr/src/gomall/
 
 RUN cd common && go mod download && go mod verify
 RUN cd app/frontend/ && go mod download && go mod verify
-
-COPY app/frontend app/frontend
-
-RUN cd app/frontend/ && go mod tidy && CGO_ENABLED=0 go build -v -o /opt/gomall/frontend/server
+RUN cd app/frontend/ && CGO_ENABLED=0 go build -v -o /opt/gomall/frontend/server
 
 FROM busybox
 

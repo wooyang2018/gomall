@@ -1,4 +1,4 @@
-# config.yml
+# Promtail 是一个用于收集和转发日志的工具，通常与 Grafana Loki 配合使用。
 server:
   http_listen_port: 9080
   grpc_listen_port: 0

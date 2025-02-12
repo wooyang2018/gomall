@@ -1,28 +1,24 @@
+# 使用 golang:1.23 作为基础镜像，并命名该构建阶段为 builder。
 FROM golang:1.23 AS builder
 
+# 定义一个构建参数 SVC，可以在构建时通过 --build-arg 传递。
 ARG SVC
 
 WORKDIR /usr/src/gomall
 
-# Set the GOPROXY environment variable to use the goproxy.io proxy (for China)
 ENV GOPROXY=https://goproxy.cn,direct
 
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
-COPY app/${SVC}/go.mod app/${SVC}/go.sum ./app/${SVC}/
-COPY rpc_gen rpc_gen
-COPY common common
+COPY ./ /usr/src/gomall/
 
 RUN cd common && go mod download && go mod verify
 RUN cd app/${SVC}/ && go mod download && go mod verify
-
-COPY app/${SVC} app/${SVC}
-
-RUN cd app/${SVC}/ && go mod tidy && CGO_ENABLED=0 go build -v -o /opt/gomall/${SVC}/server
+RUN cd app/${SVC}/ && CGO_ENABLED=0 go build -v -o /opt/gomall/${SVC}/server
 
 FROM busybox
 
 ARG SVC
 
+# 从名为 builder 的构建阶段中复制生成的 server 二进制文件到新的镜像中。
 COPY --from=builder /opt/gomall/${SVC}/server /opt/gomall/${SVC}/server
 
 COPY app/${SVC}/conf /opt/gomall/${SVC}/conf

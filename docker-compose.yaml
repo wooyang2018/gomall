@@ -21,6 +21,7 @@ services:
     environment:
       CONSUL_BIND_INTERFACE: eth0
 
+  # grafana.json 是 Grafana 仪表板的核心配置文件，用于定义仪表板的布局、图表和数据源等。
   jaeger-all-in-one:
     container_name: jaeger-all-in-one
     image: jaegertracing/all-in-one:latest

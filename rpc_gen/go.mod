@@ -2,6 +2,7 @@ module github.com/cloudwego/biz-demo/gomall/rpc_gen
 
 // 生成命令：cwgo client --type RPC --service ${svc} --module github.com/cloudwego/biz-demo/gomall/rpc_gen  -I ../idl  --idl ../idl/${svc}.proto
 // kitex_gen目录中的文件由protoc和kitex共同生成，rpc目录基于kitex_gen目录封装了易用的RPC客户端，但是本项目直接使用的kitex_gen目录的Client
+
 go 1.21
 
 require (

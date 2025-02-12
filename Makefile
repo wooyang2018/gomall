@@ -68,7 +68,7 @@ build-frontend: ## build frontend image
 #--build-arg 允许你在构建镜像时传递一些变量值到 Dockerfile 中。
 #这些变量可以在 Dockerfile 中使用 ARG 指令定义，并在构建过程中使用。
 .PHONY: build-svc
-build-svc: ## build {svc} image. example: make build-svc svc=product
+build-svc: ## build {svc} image. example: make build-svc svc=product v=v0.1
 	docker build -f ./deploy/Dockerfile.svc -t ${svc}:${v} --build-arg SVC=${svc} .
 
 .PHONY: build-all
