@@ -23,9 +23,9 @@ import (
 	"github.com/joho/godotenv"
 	"gopkg.in/natefinch/lumberjack.v2"
 
+	"github.com/cloudwego/biz-demo/gomall/app/checkout/biz/rpc"
 	"github.com/cloudwego/biz-demo/gomall/app/checkout/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/checkout/infra/mq"
-	"github.com/cloudwego/biz-demo/gomall/app/checkout/infra/rpc"
+	"github.com/cloudwego/biz-demo/gomall/common/mq"
 	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/biz-demo/gomall/common/serversuite"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"

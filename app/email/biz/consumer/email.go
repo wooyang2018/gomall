@@ -12,17 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package notify
+package consumer
 
 import (
+	"fmt"
+
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
-	"github.com/kr/pretty"
 )
 
 type NoopEmail struct{}
 
+// 通过美化打印的方式模拟发送邮件
 func (e *NoopEmail) Send(req *email.EmailReq) error {
-	pretty.Printf("%v", req)
+	fmt.Printf("---> Sending Email --->\n%+v\n", req)
 	return nil
 }
 

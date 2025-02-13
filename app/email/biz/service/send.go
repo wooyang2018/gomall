@@ -17,19 +17,27 @@ package service
 import (
 	"context"
 
-	email "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
+	"github.com/nats-io/nats.go"
+	"google.golang.org/protobuf/proto"
+
+	"github.com/cloudwego/biz-demo/gomall/common/mq"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email"
 )
 
 type SendService struct {
 	ctx context.Context
-} // NewSendService new SendService
+}
+
+// NewSendService new SendService
 func NewSendService(ctx context.Context) *SendService {
 	return &SendService{ctx: ctx}
 }
 
-// Run create note info
 func (s *SendService) Run(req *email.EmailReq) (resp *email.EmailResp, err error) {
-	// Finish your business logic.
-
-	return
+	data, _ := proto.Marshal(req)
+	msg := &nats.Msg{Subject: "email", Data: data, Header: make(nats.Header)}
+	if err := mq.Nc.PublishMsg(msg); err != nil {
+		return nil, err
+	}
+	return &email.EmailResp{}, nil
 }

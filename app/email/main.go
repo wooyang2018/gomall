@@ -18,17 +18,16 @@ import (
 	"net"
 	"strings"
 
-	"github.com/joho/godotenv"
-	"gopkg.in/natefinch/lumberjack.v2"
-
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/cloudwego/kitex/pkg/rpcinfo"
 	"github.com/cloudwego/kitex/server"
+	"github.com/joho/godotenv"
 	"github.com/kitex-contrib/obs-opentelemetry/provider"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/cloudwego/biz-demo/gomall/app/email/biz/consumer"
 	"github.com/cloudwego/biz-demo/gomall/app/email/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/email/infra/mq"
+	"github.com/cloudwego/biz-demo/gomall/common/mq"
 	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/email/emailservice"
@@ -38,7 +37,6 @@ var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
 	_ = godotenv.Load()
-	opts := kitexInit()
 
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
@@ -46,12 +44,16 @@ func main() {
 		MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
 		MaxAge:     conf.GetConf().Kitex.LogMaxAge,
 	})
+	klog.SetLevel(conf.LogLevel())
+
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+
 	mq.Init()
 	consumer.Init()
-	svr := emailservice.NewServer(new(EmailServiceImpl), opts...)
 
+	opts := kitexInit()
+	svr := emailservice.NewServer(new(EmailServiceImpl), opts...)
 	err := svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
@@ -59,7 +61,6 @@ func main() {
 }
 
 func kitexInit() (opts []server.Option) {
-	// address
 	address := conf.GetConf().Kitex.Address
 	if strings.HasPrefix(address, ":") {
 		localIp := utils.MustGetLocalIPv4()
@@ -76,7 +77,6 @@ func kitexInit() (opts []server.Option) {
 		provider.WithEnableMetrics(false),
 	)
 
-	// service info
 	opts = append(opts, server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{
 		ServiceName: conf.GetConf().Kitex.Service,
 	}))

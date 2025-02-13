@@ -12,27 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package mysql
+package mq
 
 import (
-	"github.com/cloudwego/biz-demo/gomall/app/email/conf"
-
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	"github.com/nats-io/nats.go"
 )
 
 var (
-	DB  *gorm.DB
+	Nc  *nats.Conn
 	err error
 )
 
+// NATS是一个轻量级、高性能的开源消息传递系统，用于构建分布式和微服务架构中的实时通信。
+// 它提供了简单的发布-订阅和请求-回复模式，使得不同的服务之间可以高效地交换消息。
 func Init() {
-	DB, err = gorm.Open(mysql.Open(conf.GetConf().MySQL.DSN),
-		&gorm.Config{
-			PrepareStmt:            true,
-			SkipDefaultTransaction: true,
-		},
-	)
+	Nc, err = nats.Connect(nats.DefaultURL)
 	if err != nil {
 		panic(err)
 	}

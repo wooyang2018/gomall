@@ -19,6 +19,8 @@ services:
     ports:
       - "8500:8500"
     environment:
+      # 如果你的服务器有一个内部网络接口（如eth0）和一个外部网络接口（如eth1），
+      # 你可能希望Consul代理只绑定到内部网络接口，以确保内部服务之间的通信安全。
       CONSUL_BIND_INTERFACE: eth0
 
   # grafana.json 是 Grafana 仪表板的核心配置文件，用于定义仪表板的布局、图表和数据源等。

@@ -2,7 +2,7 @@ kitex:
   service: "email"
   address: ":8887"
   metrics_port: ":9997"
-  log_level: info
+  log_level: debug
   log_file_name: "log/kitex.log"
   log_max_size: 10
   log_max_age: 3
@@ -10,15 +10,15 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:2379
+    - consul:2379
   username: ""
   password: ""
 
 mysql:
-  dsn: "gorm:gorm@tcp(127.0.0.1:3306)/gorm?charset=utf8mb4&parseTime=True&loc=Local"
+  dsn: "gorm:gorm@tcp(mysql:3306)/gorm?charset=utf8mb4&parseTime=True&loc=Local"
 
 redis:
-  address: "127.0.0.1:6379"
+  address: "redis:6379"
   username: ""
   password: ""
   db: 0
