@@ -8,7 +8,13 @@ services:
       - MYSQL_ROOT_PASSWORD=root
     volumes:
       - ./db/sql/ini:/docker-entrypoint-initdb.d
+
   redis:
     image: 'redis:latest'
     ports:
       - 6379:6379
+
+  consul:
+    image: "hashicorp/consul:latest"
+    ports:
+      - "8500:8500"

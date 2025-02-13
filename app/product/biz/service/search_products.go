@@ -19,12 +19,14 @@ import (
 
 	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/product/biz/model"
-	product "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 )
 
 type SearchProductsService struct {
 	ctx context.Context
-} // NewSearchProductsService new SearchProductsService
+}
+
+// NewSearchProductsService new SearchProductsService
 func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 	return &SearchProductsService{ctx: ctx}
 }

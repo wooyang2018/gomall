@@ -19,12 +19,13 @@ import (
 	"os"
 	"time"
 
-	"github.com/cloudwego/kitex/server"
-
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/cloudwego/kitex/server"
 	kitexzap "github.com/kitex-contrib/obs-opentelemetry/logging/zap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/cloudwego/biz-demo/gomall/app/user/conf"
 )
 
 // InitLog 初始化日志记录器
@@ -60,6 +61,6 @@ func InitLog(ioWriter io.Writer) {
 	// 创建一个新的日志记录器，并将其设置为全局日志记录器
 	log := kitexzap.NewLogger(opts...)
 	klog.SetLogger(log)
-	klog.SetLevel(klog.LevelTrace)
+	klog.SetLevel(conf.LogLevel())
 	klog.SetOutput(output)
 }

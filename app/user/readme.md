@@ -27,3 +27,13 @@
 sh build.sh
 sh output/bootstrap.sh
 ```
+
+## Some Tips
+
+```shell
+GO_ENV=dev go run .
+docker compose down -f docker-compose-local.yaml
+```
+
+如果你的服务器有一个内部网络接口（如eth0）和一个外部网络接口（如eth1），
+你可能希望Consul代理只绑定到内部网络接口，以确保内部服务之间的通信安全。

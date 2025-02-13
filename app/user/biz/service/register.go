@@ -18,15 +18,18 @@ import (
 	"context"
 	"errors"
 
+	"golang.org/x/crypto/bcrypt"
+
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type RegisterService struct {
 	ctx context.Context
-} // NewRegisterService new RegisterService
+}
+
+// NewRegisterService new RegisterService
 func NewRegisterService(ctx context.Context) *RegisterService {
 	return &RegisterService{ctx: ctx}
 }
@@ -38,6 +41,7 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 		err = errors.New("Password must be the same as ConfirmPassword")
 		return
 	}
+	// GenerateFromPassword 返回给定成本下密码的 bcrypt 哈希值。
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return
@@ -49,6 +53,6 @@ func (s *RegisterService) Run(req *user.RegisterReq) (resp *user.RegisterResp, e
 	if err = model.Create(mysql.DB, s.ctx, newUser); err != nil {
 		return
 	}
-
+	// newUser在被插入数据库后，ID字段会被自动填充
 	return &user.RegisterResp{UserId: int32(newUser.ID)}, nil
 }

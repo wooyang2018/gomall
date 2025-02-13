@@ -15,21 +15,28 @@
 package service
 
 import (
+	"context"
 	"testing"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 )
 
+// GO_ENV=dev go test -run TestRegister_Run
 func TestRegister_Run(t *testing.T) {
-	// ctx := context.Background()
-	// s := NewRegisterService(ctx)
-	// // init req and assert value
+	ctx := context.Background()
+	s := NewRegisterService(ctx)
 
-	// req := &user.RegisterReq{}
-	// resp, err := s.Run(req)
-	// if err != nil {
-	// 	t.Errorf("unexpected error: %v", err)
-	// }
-	// if resp == nil {
-	// 	t.Errorf("unexpected nil response")
-	// }
-	// todo: edit your unit test
+	// init req and assert value
+	req := &user.RegisterReq{
+		Email:           "123456@qq.com",
+		Password:        "123456",
+		ConfirmPassword: "123456",
+	}
+	resp, err := s.Run(req)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if resp == nil {
+		t.Errorf("unexpected nil response")
+	}
 }

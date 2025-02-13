@@ -17,16 +17,19 @@ package service
 import (
 	"context"
 
+	"github.com/cloudwego/kitex/pkg/kerrors"
+
 	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal/redis"
 	"github.com/cloudwego/biz-demo/gomall/app/product/biz/model"
-	product "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
-	"github.com/cloudwego/kitex/pkg/kerrors"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 )
 
 type GetProductService struct {
 	ctx context.Context
-} // NewGetProductService new GetProductService
+}
+
+// NewGetProductService new GetProductService
 func NewGetProductService(ctx context.Context) *GetProductService {
 	return &GetProductService{ctx: ctx}
 }

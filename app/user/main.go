@@ -34,29 +34,41 @@ import (
 var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
-	_ = godotenv.Load()
+	// 加载环境变量文件
+	if err := godotenv.Load(); err != nil {
+		klog.Error(err.Error())
+	}
 
+	// 初始化日志记录器
 	mtl.InitLog(&lumberjack.Logger{
-		Filename:   conf.GetConf().Kitex.LogFileName,
-		MaxSize:    conf.GetConf().Kitex.LogMaxSize,
+		// 日志文件名
+		Filename: conf.GetConf().Kitex.LogFileName,
+		// 每个日志文件的最大大小（MB）
+		MaxSize: conf.GetConf().Kitex.LogMaxSize,
+		// 保留的旧日志文件的最大数量
 		MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
-		MaxAge:     conf.GetConf().Kitex.LogMaxAge,
+		// 保留旧日志文件的最大天数
+		MaxAge: conf.GetConf().Kitex.LogMaxAge,
 	})
+
+	// 初始化跟踪器
 	mtl.InitTracing(serviceName)
+
+	// 初始化指标收集器
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+
+	// 初始化数据访问层
 	dal.Init()
+
+	// 创建一个新的Kitex服务实例m，启动Kitex服务
 	opts := kitexInit()
-
 	svr := userservice.NewServer(new(UserServiceImpl), opts...)
-
-	err := svr.Run()
-	if err != nil {
+	if err := svr.Run(); err != nil {
 		klog.Error(err.Error())
 	}
 }
 
 func kitexInit() (opts []server.Option) {
-	// address
 	address := conf.GetConf().Kitex.Address
 	if strings.HasPrefix(address, ":") {
 		localIp := utils.MustGetLocalIPv4()
@@ -66,7 +78,6 @@ func kitexInit() (opts []server.Option) {
 	if err != nil {
 		panic(err)
 	}
-
 	opts = append(opts, server.WithServiceAddr(addr), server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
 	return
 }

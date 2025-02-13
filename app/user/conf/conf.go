@@ -83,6 +83,7 @@ func initConf() {
 		panic(err)
 	}
 	conf = new(Config)
+	// yaml.Unmarshal方法将YAML数据解析为Go结构体
 	err = yaml.Unmarshal(content, conf)
 	if err != nil {
 		klog.Error("parse yaml error - %v", err)
@@ -104,7 +105,6 @@ func GetEnv() string {
 	return e
 }
 
-// TODO: conf.yaml中配置的LogLevel尚未生效，可配置mtl.InitLog中的LogLevel
 func LogLevel() klog.Level {
 	level := GetConf().Kitex.LogLevel
 	switch level {

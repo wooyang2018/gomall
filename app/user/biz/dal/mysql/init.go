@@ -41,11 +41,10 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	if err != nil {
-		panic(err)
-	}
 	if os.Getenv("GO_ENV") != "online" {
+		// 检查数据库中是否存在 User 表。! 运算符用于取反。
 		needDemoData := !DB.Migrator().HasTable(&model.User{})
+		// 使用 GORM 的 AutoMigrate 方法自动创建或更新数据库表结构。
 		DB.AutoMigrate( //nolint:errcheck
 			&model.User{},
 		)

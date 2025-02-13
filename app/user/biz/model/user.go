@@ -30,6 +30,8 @@ func (u User) TableName() string {
 	return "user"
 }
 
+// 经过验证，返回值user既可以是指针也可以是值，但是First调用必须传入指针&user
+// 原因：虽然user本身已经是*User类型，但First方法需要一个指向User类型的指针作为参数，因此我们需要使用&user来传递这个指针。
 func GetByEmail(db *gorm.DB, ctx context.Context, email string) (user *User, err error) {
 	err = db.WithContext(ctx).Model(&User{}).Where(&User{Email: email}).First(&user).Error
 	return
