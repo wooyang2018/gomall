@@ -42,13 +42,14 @@ func main() {
 		MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
 		MaxAge:     conf.GetConf().Kitex.LogMaxAge,
 	})
+	klog.SetLevel(conf.LogLevel())
+
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	dal.Init()
+
 	opts := kitexInit()
-
 	svr := paymentservice.NewServer(new(PaymentServiceImpl), opts...)
-
 	err := svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
@@ -56,7 +57,6 @@ func main() {
 }
 
 func kitexInit() (opts []server.Option) {
-	// address
 	address := conf.GetConf().Kitex.Address
 	if strings.HasPrefix(address, ":") {
 		localIp := utils.MustGetLocalIPv4()
@@ -72,6 +72,5 @@ func kitexInit() (opts []server.Option) {
 		server.WithMiddleware(middleware.ServerMiddleware),
 	)
 	opts = append(opts, server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
-
 	return
 }

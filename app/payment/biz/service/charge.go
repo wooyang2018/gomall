@@ -19,17 +19,20 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/dal/mysql"
-	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/model"
-	payment "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
 	"github.com/cloudwego/kitex/pkg/kerrors"
 	creditcard "github.com/durango/go-credit-card"
 	"github.com/google/uuid"
+
+	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/dal/mysql"
+	"github.com/cloudwego/biz-demo/gomall/app/payment/biz/model"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
 )
 
 type ChargeService struct {
 	ctx context.Context
-} // NewChargeService new ChargeService
+}
+
+// NewChargeService new ChargeService
 func NewChargeService(ctx context.Context) *ChargeService {
 	return &ChargeService{ctx: ctx}
 }
@@ -45,9 +48,10 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 
 	err = card.Validate(true)
 	if err != nil {
-		return nil, kerrors.NewBizStatusError(400, err.Error())
+		return nil, kerrors.NewBizStatusError(50000, err.Error())
 	}
 
+	// 使用 UUID 生成一个随机的 translationId
 	translationId, err := uuid.NewRandom()
 	if err != nil {
 		return nil, err
@@ -59,9 +63,6 @@ func (s *ChargeService) Run(req *payment.ChargeReq) (resp *payment.ChargeResp, e
 		Amount:        req.Amount,
 		PayAt:         time.Now(),
 	})
-	if err != nil {
-		return nil, err
-	}
 	if err != nil {
 		return nil, err
 	}

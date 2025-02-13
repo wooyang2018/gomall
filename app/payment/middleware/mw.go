@@ -27,9 +27,6 @@ func ServerMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 		ri := rpcinfo.GetRPCInfo(ctx)
 		// get client serviceName
 		klog.Infof("client serviceName: %v\n", ri.From().ServiceName())
-		if err := next(ctx, req, resp); err != nil {
-			return err
-		}
-		return nil
+		return next(ctx, req, resp)
 	}
 }

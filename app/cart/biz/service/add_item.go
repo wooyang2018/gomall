@@ -21,9 +21,10 @@ import (
 	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/model"
 	"github.com/cloudwego/biz-demo/gomall/app/cart/infra/rpc"
 
-	cart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/kitex/pkg/kerrors"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 )
 
 type AddItemService struct {
@@ -42,7 +43,7 @@ func (s *AddItemService) Run(req *cart.AddItemReq) (resp *cart.AddItemResp, err 
 	}
 
 	if getProduct.Product == nil || getProduct.Product.Id == 0 {
-		return nil, kerrors.NewBizStatusError(40004, "product not exist")
+		return nil, kerrors.NewBizStatusError(40000, "product not exist")
 	}
 
 	err = model.AddCart(mysql.DB, s.ctx, &model.Cart{
