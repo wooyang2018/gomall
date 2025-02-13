@@ -42,11 +42,13 @@ func main() {
 		MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
 		MaxAge:     conf.GetConf().Kitex.LogMaxAge,
 	})
+	klog.SetLevel(conf.LogLevel())
+
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
 	dal.Init()
-	opts := kitexInit()
 
+	opts := kitexInit()
 	svr := productcatalogservice.NewServer(new(ProductCatalogServiceImpl), opts...)
 	err := svr.Run()
 	if err != nil {
@@ -55,7 +57,6 @@ func main() {
 }
 
 func kitexInit() (opts []server.Option) {
-	// address
 	address := conf.GetConf().Kitex.Address
 	if strings.HasPrefix(address, ":") {
 		localIp := utils.MustGetLocalIPv4()

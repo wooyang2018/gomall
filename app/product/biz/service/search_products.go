@@ -31,9 +31,7 @@ func NewSearchProductsService(ctx context.Context) *SearchProductsService {
 	return &SearchProductsService{ctx: ctx}
 }
 
-// Run create note info
 func (s *SearchProductsService) Run(req *product.SearchProductsReq) (resp *product.SearchProductsResp, err error) {
-	// Finish your business logic.
 	p, err := model.SearchProduct(mysql.DB, s.ctx, req.Query)
 	var results []*product.Product
 	for _, v := range p {

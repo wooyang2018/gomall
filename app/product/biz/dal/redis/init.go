@@ -17,12 +17,13 @@ package redis
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/product/conf"
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/kitex/pkg/klog"
 	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/extra/redisprometheus/v9"
 	"github.com/redis/go-redis/v9"
+
+	"github.com/cloudwego/biz-demo/gomall/app/product/conf"
+	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 )
 
 var RedisClient *redis.Client
@@ -37,11 +38,12 @@ func Init() {
 	if err := RedisClient.Ping(context.Background()).Err(); err != nil {
 		panic(err)
 	}
+	// 这行代码使用 redisotel.InstrumentTracing 函数为 Redis 客户端添加分布式追踪功能。
+	// redisotel 是一个用于将 Redis 操作与 OpenTelemetry 集成的库，它可以帮助开发者追踪 Redis 请求的执行情况
 	if err := redisotel.InstrumentTracing(RedisClient); err != nil {
 		klog.Error("redis tracing collect error ", err)
 	}
 	if err := mtl.Registry.Register(redisprometheus.NewCollector("default", "product", RedisClient)); err != nil {
 		klog.Error("redis metric collect error ", err)
 	}
-	redisotel.InstrumentTracing(RedisClient) //nolint:errcheck
 }

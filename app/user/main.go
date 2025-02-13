@@ -50,6 +50,7 @@ func main() {
 		// 保留旧日志文件的最大天数
 		MaxAge: conf.GetConf().Kitex.LogMaxAge,
 	})
+	klog.SetLevel(conf.LogLevel())
 
 	// 初始化跟踪器
 	mtl.InitTracing(serviceName)

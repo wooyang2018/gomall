@@ -32,6 +32,7 @@ func (c Category) TableName() string {
 }
 
 func GetProductsByCategoryName(db *gorm.DB, ctx context.Context, name string) (category []Category, err error) {
+	// Preload("Products") 预加载了 Category 模型中的 Products 字段，表示我们希望在查询类别记录的同时，也查询出与该类别相关的产品信息。
 	err = db.WithContext(ctx).Model(&Category{}).Where(&Category{Name: name}).Preload("Products").Find(&category).Error
 	return category, err
 }

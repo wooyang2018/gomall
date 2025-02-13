@@ -92,6 +92,8 @@ func initConf() {
 		klog.Error("parse yaml error - %v", err)
 		panic(err)
 	}
+	// validator包的使用方法是通过在结构体字段上添加验证标签，然后调用
+	// validator.Validate函数来验证结构体实例的字段值是否符合指定的规则。
 	if err := validator.Validate(conf); err != nil {
 		klog.Error("validate config error - %v", err)
 		panic(err)

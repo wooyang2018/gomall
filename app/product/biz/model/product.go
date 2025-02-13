@@ -24,6 +24,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Product表和Category表之间的多对多关系
 type Product struct {
 	Base
 	Name        string     `json:"name"`
@@ -57,6 +58,7 @@ type CachedProductQuery struct {
 	prefix       string
 }
 
+// 从缓存中获取产品信息，如果缓存中不存在，则从数据库中查询并将结果缓存起来。
 func (c CachedProductQuery) GetById(productId int) (product Product, err error) {
 	cacheKey := fmt.Sprintf("%s_%s_%d", c.prefix, "product_by_id", productId)
 	cachedResult := c.cacheClient.Get(c.productQuery.ctx, cacheKey)
@@ -85,6 +87,7 @@ func (c CachedProductQuery) GetById(productId int) (product Product, err error) 
 		if err != nil {
 			return product, nil
 		}
+		// Set the cache with an expiration time of 1 hour
 		_ = c.cacheClient.Set(c.productQuery.ctx, cacheKey, encoded, time.Hour)
 	}
 	return
@@ -94,12 +97,9 @@ func NewCachedProductQuery(pq ProductQuery, cacheClient *redis.Client) CachedPro
 	return CachedProductQuery{productQuery: pq, cacheClient: cacheClient, prefix: "cloudwego_shop"}
 }
 
-func GetProductById(db *gorm.DB, ctx context.Context, productId int) (product Product, err error) {
-	err = db.WithContext(ctx).Model(&Product{}).Where(&Product{Base: Base{ID: productId}}).First(&product).Error
-	return product, err
-}
-
 func SearchProduct(db *gorm.DB, ctx context.Context, q string) (product []*Product, err error) {
+	// "name like ? or description like ?" 是查询条件，表示查询 name 字段或 description 字段
+	// 包含搜索关键字 q 的记录。"%"+q+"%" 是 SQL 中的通配符，表示匹配包含 q 的任意字符串
 	err = db.WithContext(ctx).Model(&Product{}).Find(&product, "name like ? or description like ?", "%"+q+"%", "%"+q+"%").Error
 	return product, err
 }

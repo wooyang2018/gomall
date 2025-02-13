@@ -2,7 +2,7 @@ kitex:
   service: "product"
   address: ":8882"
   metrics_port: ":9992"
-  log_level: info
+  log_level: debug
   log_file_name: "log/kitex.log"
   log_max_size: 10
   log_max_age: 3

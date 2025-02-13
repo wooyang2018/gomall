@@ -34,10 +34,8 @@ func NewGetProductService(ctx context.Context) *GetProductService {
 	return &GetProductService{ctx: ctx}
 }
 
-// Run create note info
 func (s *GetProductService) Run(req *product.GetProductReq) (resp *product.GetProductResp, err error) {
-	// Finish your business logic.
-	if req.Id == 0 {
+	if req.Id == 0 { // req.Id的默认值是0，所以业务上product id不能为0
 		return nil, kerrors.NewBizStatusError(40000, "product id is required")
 	}
 

@@ -16,17 +16,44 @@ package service
 
 import (
 	"context"
+	"os"
 	"testing"
 
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/joho/godotenv"
+
+	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal"
+	"github.com/cloudwego/biz-demo/gomall/app/product/conf"
+	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 )
 
+func init() {
+	os.Chdir("..") //nolint:errcheck
+	os.Chdir("..") //nolint:errcheck
+	if _, err := os.Getwd(); err != nil {
+		klog.Error(err.Error())
+	}
+
+	// 加载环境变量文件
+	if err := godotenv.Load(); err != nil {
+		klog.Error(err.Error())
+	}
+
+	var serviceName = conf.GetConf().Kitex.Service
+
+	mtl.InitTracing(serviceName)
+	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+	dal.Init() // 初始化MySQL和Redis实例
+}
+
+// GO_ENV=dev go test -run TestGetProduct_Run
 func TestGetProduct_Run(t *testing.T) {
 	ctx := context.Background()
 	s := NewGetProductService(ctx)
-	// init req and assert value
 
-	req := &product.GetProductRequest{}
+	// init req and assert value
+	req := &product.GetProductReq{Id: 1}
 	resp, err := s.Run(req)
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
@@ -34,5 +61,4 @@ func TestGetProduct_Run(t *testing.T) {
 	if resp == nil {
 		t.Errorf("unexpected nil response")
 	}
-	// todo: edit your unit test
 }

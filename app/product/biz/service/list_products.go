@@ -19,19 +19,19 @@ import (
 
 	"github.com/cloudwego/biz-demo/gomall/app/product/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/product/biz/model"
-	product "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 )
 
 type ListProductsService struct {
 	ctx context.Context
-} // NewListProductsService new ListProductsService
+}
+
+// NewListProductsService new ListProductsService
 func NewListProductsService(ctx context.Context) *ListProductsService {
 	return &ListProductsService{ctx: ctx}
 }
 
-// Run create note info
 func (s *ListProductsService) Run(req *product.ListProductsReq) (resp *product.ListProductsResp, err error) {
-	// Finish your business logic.
 	c, err := model.GetProductsByCategoryName(mysql.DB, s.ctx, req.CategoryName)
 	if err != nil {
 		return nil, err

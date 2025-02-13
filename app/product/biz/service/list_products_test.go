@@ -15,21 +15,24 @@
 package service
 
 import (
+	"context"
 	"testing"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 )
 
+// GO_ENV=dev go test -run TestListProducts_Run
 func TestListProducts_Run(t *testing.T) {
-	// ctx := context.Background()
-	// s := NewListProductsService(ctx)
-	// // init req and assert value
+	ctx := context.Background()
+	s := NewListProductsService(ctx)
 
-	// req := &product.ListProductsReq{}
-	// resp, err := s.Run(req)
-	// if err != nil {
-	// 	t.Errorf("unexpected error: %v", err)
-	// }
-	// if resp == nil {
-	// 	t.Errorf("unexpected nil response")
-	// }
-	// // todo: edit your unit test
+	// init req and assert value
+	req := &product.ListProductsReq{CategoryName: "T-Shirt"}
+	resp, err := s.Run(req)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if resp == nil {
+		t.Errorf("unexpected nil response")
+	}
 }
