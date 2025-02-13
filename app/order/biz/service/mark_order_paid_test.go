@@ -18,18 +18,25 @@ import (
 	"context"
 	"testing"
 
-	order "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
 )
 
+// GO_ENV=dev go test -run TestMarkOrderPaid_Run
 func TestMarkOrderPaid_Run(t *testing.T) {
 	ctx := context.Background()
 	s := NewMarkOrderPaidService(ctx)
+
 	// init req and assert value
-
-	req := &order.MarkOrderPaidReq{}
+	req := &order.MarkOrderPaidReq{
+		// 请先使用place_order_test.go中的TestPlaceOrder_Run方法创建订单
+		OrderId: "642f0dcf-e9f0-11ef-aa38-7470fd384dd9",
+		UserId:  1,
+	}
 	resp, err := s.Run(req)
-	t.Logf("err: %v", err)
-	t.Logf("resp: %v", resp)
-
-	// todo: edit your unit test
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if resp == nil {
+		t.Errorf("unexpected nil response")
+	}
 }

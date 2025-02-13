@@ -36,7 +36,6 @@ func NewListOrderService(ctx context.Context) *ListOrderService {
 
 // Run create note info
 func (s *ListOrderService) Run(req *order.ListOrderReq) (resp *order.ListOrderResp, err error) {
-	// Finish your business logic.
 	orders, err := model.ListOrder(mysql.DB, s.ctx, req.UserId)
 	if err != nil {
 		klog.Errorf("model.ListOrder.err:%v", err)
@@ -70,8 +69,6 @@ func (s *ListOrderService) Run(req *order.ListOrderReq) (resp *order.ListOrderRe
 		}
 		list = append(list, o)
 	}
-	resp = &order.ListOrderResp{
-		Orders: list,
-	}
+	resp = &order.ListOrderResp{Orders: list}
 	return
 }

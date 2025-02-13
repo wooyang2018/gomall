@@ -36,7 +36,6 @@ func NewMarkOrderPaidService(ctx context.Context) *MarkOrderPaidService {
 
 // Run create note info
 func (s *MarkOrderPaidService) Run(req *order.MarkOrderPaidReq) (resp *order.MarkOrderPaidResp, err error) {
-	// Finish your business logic.
 	if req.UserId == 0 || req.OrderId == "" {
 		err = fmt.Errorf("user_id or order_id can not be empty")
 		return

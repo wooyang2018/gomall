@@ -20,9 +20,9 @@ import (
 	"gorm.io/gorm"
 )
 
+// 表示订单的收件人信息。
 type Consignee struct {
-	Email string
-
+	Email         string
 	StreetAddress string
 	City          string
 	State         string
@@ -40,12 +40,15 @@ const (
 
 type Order struct {
 	Base
-	OrderId      string `gorm:"uniqueIndex;size:256"`
-	UserId       uint32
+	OrderId string `gorm:"uniqueIndex;size:256"`
+	UserId  uint32
+	//  Currency 通常指的是货币，UserCurrency 字段通常用于存储订单创建时
+	//  用户所使用的货币，例如美元（USD）、欧元（EUR）、人民币（CNY）等。
 	UserCurrency string
-	Consignee    Consignee   `gorm:"embedded"`
-	OrderItems   []OrderItem `gorm:"foreignKey:OrderIdRefer;references:OrderId"`
-	OrderState   OrderState
+	Consignee    Consignee `gorm:"embedded"`
+	// 一笔订单可能包含多个商品，因此 OrderItems 字段通常是一个切片，
+	OrderItems []OrderItem `gorm:"foreignKey:OrderIdRefer;references:OrderId"`
+	OrderState OrderState
 }
 
 func (o Order) TableName() string {

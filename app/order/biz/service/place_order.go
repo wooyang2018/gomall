@@ -37,12 +37,12 @@ func NewPlaceOrderService(ctx context.Context) *PlaceOrderService {
 
 // Run create note info
 func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrderResp, err error) {
-	// Finish your business logic.
 	if len(req.OrderItems) == 0 {
 		err = fmt.Errorf("OrderItems empty")
 		return
 	}
 
+	// 使用Transaction启动事务，保证Order和OrderItem创建的一致性
 	err = mysql.DB.Transaction(func(tx *gorm.DB) error {
 		orderId, _ := uuid.NewUUID()
 
@@ -56,11 +56,10 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 			},
 		}
 		if req.Address != nil {
-			a := req.Address
-			o.Consignee.Country = a.Country
-			o.Consignee.State = a.State
-			o.Consignee.City = a.City
-			o.Consignee.StreetAddress = a.StreetAddress
+			o.Consignee.Country = req.Address.Country
+			o.Consignee.State = req.Address.State
+			o.Consignee.City = req.Address.City
+			o.Consignee.StreetAddress = req.Address.StreetAddress
 		}
 		if err := tx.Create(o).Error; err != nil {
 			return err
@@ -83,9 +82,7 @@ func (s *PlaceOrderService) Run(req *order.PlaceOrderReq) (resp *order.PlaceOrde
 				OrderId: orderId.String(),
 			},
 		}
-
 		return nil
 	})
-
 	return
 }

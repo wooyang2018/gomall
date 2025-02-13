@@ -15,8 +15,58 @@
 package service
 
 import (
+	"context"
+	"fmt"
 	"testing"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
 )
 
+func mockPlaceOrderReq() *order.PlaceOrderReq {
+	// 构造 Address 实例
+	address := &order.Address{
+		StreetAddress: "Main St",
+		City:          "Anytown",
+		State:         "CA",
+		Country:       "USA",
+		ZipCode:       12345,
+	}
+
+	// 构造 OrderItem 实例
+	orderItem := &order.OrderItem{
+		Item: &cart.CartItem{
+			ProductId: 1,
+			Quantity:  2,
+		},
+		Cost: 19.99,
+	}
+
+	// 构造 PlaceOrderReq 实例
+	placeOrderReq := &order.PlaceOrderReq{
+		UserId:       1,
+		UserCurrency: "USD",
+		Address:      address,
+		Email:        "123456@qq.com",
+		OrderItems:   []*order.OrderItem{orderItem},
+	}
+
+	return placeOrderReq
+}
+
+// GO_ENV=dev go test -run TestPlaceOrder_Run
 func TestPlaceOrder_Run(t *testing.T) {
+	ctx := context.Background()
+	s := NewPlaceOrderService(ctx)
+
+	// init req and assert value
+	req := mockPlaceOrderReq()
+	resp, err := s.Run(req)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if resp == nil {
+		t.Errorf("unexpected nil response")
+	}
+	fmt.Println("创建订单成功，", resp.Order)
 }
