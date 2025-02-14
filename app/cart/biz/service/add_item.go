@@ -19,7 +19,7 @@ import (
 
 	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/app/cart/infra/rpc"
+	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/rpc"
 
 	"github.com/cloudwego/kitex/pkg/kerrors"
 
@@ -29,14 +29,14 @@ import (
 
 type AddItemService struct {
 	ctx context.Context
-} // NewAddItemService new AddItemService
+}
+
+// NewAddItemService new AddItemService
 func NewAddItemService(ctx context.Context) *AddItemService {
 	return &AddItemService{ctx: ctx}
 }
 
-// Run create note info
 func (s *AddItemService) Run(req *cart.AddItemReq) (resp *cart.AddItemResp, err error) {
-	// Finish your business logic.
 	getProduct, err := rpc.ProductClient.GetProduct(s.ctx, &product.GetProductReq{Id: req.Item.GetProductId()})
 	if err != nil {
 		return nil, err

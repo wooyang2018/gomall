@@ -33,11 +33,12 @@ var (
 	ProductClient productcatalogservice.Client
 	PaymentClient paymentservice.Client
 	OrderClient   orderservice.Client
-	once          sync.Once
-	err           error
-	registryAddr  string
-	serviceName   string
-	commonSuite   client.Option
+
+	once         sync.Once
+	err          error
+	registryAddr string
+	serviceName  string
+	commonSuite  client.Option
 )
 
 func InitClient() {

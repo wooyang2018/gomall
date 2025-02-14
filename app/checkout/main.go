@@ -36,6 +36,7 @@ var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
 	_ = godotenv.Load()
+
 	// gopkg.in/natefinch/lumberjack.v2 是一个用于日志滚动的 Go 语言库。
 	// 当日志文件达到指定的大小（例如 100MB）时，它会自动将当前日志文件重命名为一个
 	// 新的文件名（例如 app.log.1），并创建一个新的 app.log 文件来继续记录日志。
@@ -45,22 +46,22 @@ func main() {
 		MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
 		MaxAge:     conf.GetConf().Kitex.LogMaxAge,
 	})
+	klog.SetLevel(conf.LogLevel())
+
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+
 	rpc.InitClient()
 	mq.Init()
+
 	opts := kitexInit()
-
 	svr := checkoutservice.NewServer(new(CheckoutServiceImpl), opts...)
-
-	err := svr.Run()
-	if err != nil {
+	if err := svr.Run(); err != nil {
 		klog.Error(err.Error())
 	}
 }
 
 func kitexInit() (opts []server.Option) {
-	// address
 	address := conf.GetConf().Kitex.Address
 	if strings.HasPrefix(address, ":") {
 		localIp := utils.MustGetLocalIPv4()
@@ -72,6 +73,5 @@ func kitexInit() (opts []server.Option) {
 	}
 	opts = append(opts, server.WithServiceAddr(addr))
 	opts = append(opts, server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
-
 	return
 }

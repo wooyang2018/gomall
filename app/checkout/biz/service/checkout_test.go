@@ -15,8 +15,26 @@
 package service
 
 import (
+	"context"
 	"testing"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
 )
 
+// GO_ENV=dev go test -run TestCheckout_Run
 func TestCheckout_Run(t *testing.T) {
+	ctx := context.Background()
+	s := NewCheckoutService(ctx)
+
+	// init req and assert value
+	req := &checkout.CheckoutReq{
+		UserId: 1,
+	}
+	resp, err := s.Run(req)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if resp == nil {
+		t.Errorf("unexpected nil response")
+	}
 }

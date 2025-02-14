@@ -24,8 +24,8 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 
 	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/dal"
+	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/rpc"
 	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/cart/infra/rpc"
 	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/biz-demo/gomall/common/serversuite"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
@@ -36,20 +36,23 @@ var serviceName = conf.GetConf().Kitex.Service
 
 func main() {
 	_ = godotenv.Load()
+
 	mtl.InitLog(&lumberjack.Logger{
 		Filename:   conf.GetConf().Kitex.LogFileName,
 		MaxSize:    conf.GetConf().Kitex.LogMaxSize,
 		MaxBackups: conf.GetConf().Kitex.LogMaxBackups,
 		MaxAge:     conf.GetConf().Kitex.LogMaxAge,
 	})
+	klog.SetLevel(conf.LogLevel())
+
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+
 	rpc.InitClient()
 	dal.Init()
+
 	opts := kitexInit()
-
 	svr := cartservice.NewServer(new(CartServiceImpl), opts...)
-
 	err := svr.Run()
 	if err != nil {
 		klog.Error(err.Error())
@@ -57,7 +60,6 @@ func main() {
 }
 
 func kitexInit() (opts []server.Option) {
-	// address
 	address := conf.GetConf().Kitex.Address
 	if strings.HasPrefix(address, ":") {
 		localIp := utils.MustGetLocalIPv4()

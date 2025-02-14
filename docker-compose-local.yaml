@@ -1,4 +1,6 @@
 # docker compose -f docker-compose-local.yaml down
+# 使用wsl2安装consul: https://developer.hashicorp.com/consul/install#linux
+# 以开发模式启动consul: consul agent -dev
 version: '3'
 services:
   mysql:
@@ -14,11 +16,6 @@ services:
     image: 'redis:latest'
     ports:
       - 6379:6379
-
-  consul:
-    image: "hashicorp/consul:latest"
-    ports:
-      - "8500:8500"
 
   nats:
     image: nats:latest

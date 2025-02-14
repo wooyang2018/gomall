@@ -38,25 +38,21 @@ import (
 
 type CheckoutService struct {
 	ctx context.Context
-} // NewCheckoutService new CheckoutService
+}
+
+// NewCheckoutService new CheckoutService
 func NewCheckoutService(ctx context.Context) *CheckoutService {
 	return &CheckoutService{ctx: ctx}
 }
 
-/*
-	Run
-
-1. get cart
-2. calculate cart
-3. create order
-4. empty cart
-5. pay
-6. change order result
-7. finish
-*/
+// 1. get cart
+// 2. calculate cart
+// 3. create order
+// 4. empty cart
+// 5. pay
+// 6. change order result
+// 7. finish
 func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.CheckoutResp, err error) {
-	// Finish your business logic.
-	// Idempotent
 	// get cart
 	cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: req.UserId})
 	if err != nil {

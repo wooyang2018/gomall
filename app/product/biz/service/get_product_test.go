@@ -41,9 +41,9 @@ func init() {
 	}
 
 	var serviceName = conf.GetConf().Kitex.Service
-
 	mtl.InitTracing(serviceName)
 	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+
 	dal.Init() // 初始化MySQL和Redis实例
 }
 

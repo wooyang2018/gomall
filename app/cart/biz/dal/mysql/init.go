@@ -18,13 +18,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cloudwego/biz-demo/gomall/common/mtl"
-
-	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/model"
-	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/plugin/opentelemetry/tracing"
+
+	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/model"
+	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
+	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 )
 
 var (
@@ -46,8 +46,7 @@ func Init() {
 		panic(err)
 	}
 	if os.Getenv("GO_ENV") != "online" {
-		//nolint:errcheck
-		DB.AutoMigrate(
+		DB.AutoMigrate( //nolint:errcheck
 			&model.Cart{},
 		)
 	}

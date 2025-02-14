@@ -26,14 +26,14 @@ import (
 
 type EmptyCartService struct {
 	ctx context.Context
-} // NewEmptyCartService new EmptyCartService
+}
+
+// NewEmptyCartService new EmptyCartService
 func NewEmptyCartService(ctx context.Context) *EmptyCartService {
 	return &EmptyCartService{ctx: ctx}
 }
 
-// Run create note info
 func (s *EmptyCartService) Run(req *cart.EmptyCartReq) (resp *cart.EmptyCartResp, err error) {
-	// Finish your business logic.
 	err = model.EmptyCart(mysql.DB, s.ctx, req.GetUserId())
 	if err != nil {
 		return &cart.EmptyCartResp{}, kerrors.NewBizStatusError(50000, "empty cart error")

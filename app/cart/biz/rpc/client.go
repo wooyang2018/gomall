@@ -17,21 +17,21 @@ package rpc
 import (
 	"sync"
 
-	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
-
 	"github.com/cloudwego/kitex/client"
 
 	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
+	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 )
 
 var (
 	ProductClient productcatalogservice.Client
-	once          sync.Once
-	err           error
-	registryAddr  string
-	serviceName   string
+
+	once         sync.Once
+	err          error
+	registryAddr string
+	serviceName  string
 )
 
 func InitClient() {

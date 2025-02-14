@@ -15,8 +15,64 @@
 package service
 
 import (
+	"context"
+	"os"
 	"testing"
+
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/joho/godotenv"
+
+	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/dal"
+	"github.com/cloudwego/biz-demo/gomall/app/cart/biz/rpc"
+	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
+	"github.com/cloudwego/biz-demo/gomall/common/mtl"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
 )
 
+func init() {
+	os.Chdir("..") //nolint:errcheck
+	os.Chdir("..") //nolint:errcheck
+	if _, err := os.Getwd(); err != nil {
+		klog.Error(err.Error())
+	}
+
+	// 加载环境变量文件
+	if err := godotenv.Load(); err != nil {
+		klog.Error(err.Error())
+	}
+
+	var serviceName = conf.GetConf().Kitex.Service
+	mtl.InitTracing(serviceName)
+	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+
+	dal.Init() // 初始化MySQL实例
+	rpc.InitClient()
+}
+
+// 创建一个 AddItemReq 实例
+func mockAddItemReq() *cart.AddItemReq {
+	req := &cart.AddItemReq{
+		UserId: 1,
+		Item: &cart.CartItem{
+			ProductId: 1,
+			Quantity:  3,
+		},
+	}
+	return req
+}
+
+// GO_ENV=dev go test -run TestAddItem_Run
 func TestAddItem_Run(t *testing.T) {
+	ctx := context.Background()
+	s := NewAddItemService(ctx)
+
+	// init req and assert value
+	req := mockAddItemReq()
+	resp, err := s.Run(req)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if resp == nil {
+		t.Errorf("unexpected nil response")
+	}
 }

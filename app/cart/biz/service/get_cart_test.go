@@ -15,8 +15,26 @@
 package service
 
 import (
+	"context"
+	"fmt"
 	"testing"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
 )
 
+// GO_ENV=dev go test -run TestGetCart_Run
 func TestGetCart_Run(t *testing.T) {
+	ctx := context.Background()
+	s := NewGetCartService(ctx)
+
+	// init req and assert value
+	req := &cart.GetCartReq{UserId: 1}
+	resp, err := s.Run(req)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if resp == nil {
+		t.Errorf("unexpected nil response")
+	}
+	fmt.Println("GetCartResp --->", resp)
 }
