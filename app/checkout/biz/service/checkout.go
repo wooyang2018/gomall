@@ -49,11 +49,11 @@ func NewCheckoutService(ctx context.Context) *CheckoutService {
 // 2. calculate cart
 // 3. create order
 // 4. empty cart
-// 5. pay
-// 6. change order result
-// 7. finish
+// 5. charge
+// 6. send email
+// 7. change order state
 func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.CheckoutResp, err error) {
-	// get cart
+	// get cart: 获取 req.UserId 的购物车，购物车中包含 CartItem 列表
 	cartResult, err := rpc.CartClient.GetCart(s.ctx, &cart.GetCartReq{UserId: req.UserId})
 	if err != nil {
 		klog.Error(err)
@@ -64,6 +64,8 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		err = errors.New("cart is empty")
 		return
 	}
+
+	// calculate cart: 计算购物车中的商品总价
 	var (
 		oi    []*order.OrderItem
 		total float32
@@ -76,17 +78,17 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 			return
 		}
 		if productResp.Product == nil {
-			continue
+			err = fmt.Errorf("product %d is invalid", cartItem.ProductId)
+			return
 		}
 		p := productResp.Product
 		cost := p.Price * float32(cartItem.Quantity)
 		total += cost
-		oi = append(oi, &order.OrderItem{
-			Item: &cart.CartItem{ProductId: cartItem.ProductId, Quantity: cartItem.Quantity},
-			Cost: cost,
-		})
+		// 一个购物车项及花费对应一个订单项
+		oi = append(oi, &order.OrderItem{Item: cartItem, Cost: cost})
 	}
-	// create order
+
+	// create order: 创建订单
 	orderReq := &order.PlaceOrderReq{
 		UserId:       req.UserId,
 		UserCurrency: "USD",
@@ -109,15 +111,17 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		err = fmt.Errorf("PlaceOrder.err:%v", err)
 		return
 	}
-	klog.Info("orderResult", orderResult)
-	// empty cart
-	emptyResult, err := rpc.CartClient.EmptyCart(s.ctx, &cart.EmptyCartReq{UserId: req.UserId})
+	klog.Info("orderResult: ", orderResult)
+
+	// empty cart: 清空购物车
+	_, err = rpc.CartClient.EmptyCart(s.ctx, &cart.EmptyCartReq{UserId: req.UserId})
 	if err != nil {
 		err = fmt.Errorf("EmptyCart.err:%v", err)
 		return
 	}
-	klog.Info(emptyResult)
-	// charge
+	klog.Info("empty cart successfully")
+
+	// charge: 支付
 	var orderId string
 	if orderResult != nil || orderResult.Order != nil {
 		orderId = orderResult.Order.OrderId
@@ -138,6 +142,9 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		err = fmt.Errorf("Charge.err:%v", err)
 		return
 	}
+	klog.Info("paymentResult: ", paymentResult)
+
+	// send email: 发送邮件
 	data, _ := proto.Marshal(&email.EmailReq{
 		From:        "from@example.com",
 		To:          req.Email,
@@ -146,20 +153,17 @@ func (s *CheckoutService) Run(req *checkout.CheckoutReq) (resp *checkout.Checkou
 		Content:     "You just created an order in CloudWeGo shop",
 	})
 	msg := &nats.Msg{Subject: "email", Data: data, Header: make(nats.Header)}
-
-	// otel inject
+	// Inject方法的作用是将当前上下文中的信息注入到msg.Header中
 	otel.GetTextMapPropagator().Inject(s.ctx, propagation.HeaderCarrier(msg.Header))
-
 	_ = mq.Nc.PublishMsg(msg)
 
-	klog.Info(paymentResult)
-	// change order state
-	klog.Info(orderResult)
+	// change order state: 更改订单状态
 	_, err = rpc.OrderClient.MarkOrderPaid(s.ctx, &order.MarkOrderPaidReq{UserId: req.UserId, OrderId: orderId})
 	if err != nil {
-		klog.Error(err)
+		err = fmt.Errorf("MarkOrderPaid.err:%v", err)
 		return
 	}
+	klog.Info("mark order paid successfully")
 
 	resp = &checkout.CheckoutResp{
 		OrderId:       orderId,

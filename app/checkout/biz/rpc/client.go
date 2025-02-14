@@ -28,6 +28,11 @@ import (
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 )
 
+// cd app/cart && GO_ENV=dev go run .
+// cd app/product && GO_ENV=dev go run .
+// cd app/payment && GO_ENV=dev go run .
+// cd app/order && GO_ENV=dev go run .
+// cd app/email && GO_ENV=dev go run .
 var (
 	CartClient    cartservice.Client
 	ProductClient productcatalogservice.Client

@@ -16,10 +16,70 @@ package service
 
 import (
 	"context"
+	"os"
 	"testing"
 
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/joho/godotenv"
+
+	"github.com/cloudwego/biz-demo/gomall/app/checkout/biz/rpc"
+	"github.com/cloudwego/biz-demo/gomall/app/checkout/conf"
+	"github.com/cloudwego/biz-demo/gomall/common/mq"
+	"github.com/cloudwego/biz-demo/gomall/common/mtl"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
 )
+
+func init() {
+	os.Chdir("..") //nolint:errcheck
+	os.Chdir("..") //nolint:errcheck
+	if _, err := os.Getwd(); err != nil {
+		klog.Error(err.Error())
+	}
+
+	// 加载环境变量文件
+	if err := godotenv.Load(); err != nil {
+		klog.Error(err.Error())
+	}
+
+	var serviceName = conf.GetConf().Kitex.Service
+	mtl.InitTracing(serviceName)
+	mtl.InitMetric(serviceName, conf.GetConf().Kitex.MetricsPort, conf.GetConf().Registry.RegistryAddress[0])
+
+	rpc.InitClient()
+	mq.Init()
+}
+
+func mockCheckoutReq() *checkout.CheckoutReq {
+	// 构造Address对象
+	address := &checkout.Address{
+		StreetAddress: "Main St",
+		City:          "San Francisco",
+		State:         "CA",
+		Country:       "USA",
+		ZipCode:       "94107",
+	}
+
+	// 构造CreditCardInfo对象
+	creditCard := &payment.CreditCardInfo{
+		CreditCardNumber:          "4111111111111111",
+		CreditCardCvv:             123,
+		CreditCardExpirationYear:  2025,
+		CreditCardExpirationMonth: 12,
+	}
+
+	// 构造CheckoutReq对象
+	checkoutReq := &checkout.CheckoutReq{
+		UserId:     1,
+		Firstname:  "John",
+		Lastname:   "Doe",
+		Email:      "john.doe@example.com",
+		Address:    address,
+		CreditCard: creditCard,
+	}
+
+	return checkoutReq
+}
 
 // GO_ENV=dev go test -run TestCheckout_Run
 func TestCheckout_Run(t *testing.T) {
@@ -27,10 +87,7 @@ func TestCheckout_Run(t *testing.T) {
 	s := NewCheckoutService(ctx)
 
 	// init req and assert value
-	req := &checkout.CheckoutReq{
-		UserId: 1,
-	}
-	resp, err := s.Run(req)
+	resp, err := s.Run(mockCheckoutReq())
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
