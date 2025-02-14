@@ -1,7 +1,7 @@
 .DS_Store
-app/cart/.env
-app/**/nohup.out
 .idea/
+.vscode/
+app/**/nohup.out
 app/**/log/
 app/**/tmp/
 app/**/kitex_gen/
