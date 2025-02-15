@@ -38,50 +38,54 @@ import (
 	oteltrace "go.opentelemetry.io/otel/trace"
 
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router"
+	bizutils "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/mtl"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/middleware"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/mtl"
 )
 
 func main() {
 	_ = godotenv.Load()
 
 	mtl.InitMtl()
-	rpc.InitClient()
-	address := conf.GetConf().Hertz.Address
+	bizutils.InitClient()
 
+	// 使用 github.com/hertz-contrib/obs-opentelemetry/provider 分布式追踪
 	p := hertzotelprovider.NewOpenTelemetryProvider(
 		hertzotelprovider.WithSdkTracerProvider(mtl.TracerProvider),
 		hertzotelprovider.WithEnableMetrics(false),
 	)
 	defer p.Shutdown(context.Background())
-	tracer, cfg := hertzoteltracing.NewServerTracer(hertzoteltracing.WithCustomResponseHandler(func(ctx context.Context, c *app.RequestContext) {
-		c.Header("shop-trace-id", oteltrace.SpanFromContext(ctx).SpanContext().TraceID().String())
-	}))
+	// 创建一个服务器追踪器和配置，并在响应头中添加追踪 ID。
+	tracer, cfg := hertzoteltracing.NewServerTracer(hertzoteltracing.WithCustomResponseHandler(
+		func(ctx context.Context, c *app.RequestContext) {
+			c.Header("shop-trace-id", oteltrace.SpanFromContext(ctx).SpanContext().TraceID().String())
+		}))
 
+	address := conf.GetConf().Hertz.Address
 	h := server.New(server.WithHostPorts(address), server.WithTracer(
+		// 为 Hertz 服务器实例配置 Prometheus 追踪器
 		hertzprom.NewServerTracer(
 			"",
 			"",
 			hertzprom.WithRegistry(mtl.Registry),
-			hertzprom.WithDisableServer(true),
-		),
-	),
+			hertzprom.WithDisableServer(true), // 禁用默认的服务器
+		)),
+		// 为 Hertz 服务器实例配置 OpenTelemetry 追踪器
 		tracer,
 	)
-	h.LoadHTMLGlob("template/*")
-	h.Delims("{{", "}}")
 
-	h.Use(hertzoteltracing.ServerMiddleware(cfg))
-	registerMiddleware(h)
+	h.LoadHTMLGlob("template/*") // 加载 HTML 模板文件
+	h.Delims("{{", "}}")         // 设置模板的分隔符
 
-	// add a ping route to test
+	h.Use(hertzoteltracing.ServerMiddleware(cfg)) // 使用 OpenTelemetry 中间件。
+	middleware.RegisterMiddleware(h)              // 注册 Auth 等自定义中间件
+	registerMiddleware(h)                         // 注册通用的第三方中间件
+	router.GeneratedRegister(h)                   // 注册IDL生成的路由
+
 	h.GET("/ping", func(c context.Context, ctx *app.RequestContext) {
 		ctx.JSON(consts.StatusOK, utils.H{"ping": "pong"})
 	})
-
-	router.GeneratedRegister(h)
 
 	h.GET("sign-in", func(ctx context.Context, c *app.RequestContext) {
 		c.HTML(consts.StatusOK, "sign-in", utils.H{
@@ -90,6 +94,8 @@ func main() {
 		})
 	})
 	h.GET("sign-up", func(ctx context.Context, c *app.RequestContext) {
+		// "sign-up"：指定要渲染的 HTML 模板文件名
+		// map[string]interface{} 类型的数据，用于向模板传递数据
 		c.HTML(consts.StatusOK, "sign-up", utils.H{
 			"title": "Sign up",
 		})
@@ -99,51 +105,129 @@ func main() {
 			"title": "Error",
 		})
 	})
+	// 如果不是线上环境，添加 robots.txt 路由，返回的内容是禁止所有爬虫访问网站
 	if os.Getenv("GO_ENV") != "online" {
 		h.GET("/robots.txt", func(ctx context.Context, c *app.RequestContext) {
-			c.Data(consts.StatusOK, "text/plain", []byte(`User-agent: *
-Disallow: /`))
+			// User-agent: * 表示针对所有爬虫，Disallow: / 表示禁止访问网站的所有路径。
+			c.Data(consts.StatusOK, "text/plain", []byte(`User-agent: * Disallow: /`))
 		})
 	}
 
 	h.Static("/static", "./")
-
-	h.Spin()
+	h.Spin() // 启动服务器
 }
 
+// registerMiddleware 给 Hertz 服务器注册各类中间件
 func registerMiddleware(h *server.Hertz) {
-	// pprof
+	// 借助 pprof 中间件可进行性能分析。
 	if conf.GetConf().Hertz.EnablePprof {
 		pprof.Register(h)
 	}
 
+	// 为 Hertz 服务器注册基于 Redis 的会话存储中间件。
 	store, err := redis.NewStore(100, "tcp", conf.GetConf().Redis.Address, "", []byte(os.Getenv("SESSION_SECRET")))
 	if err != nil {
 		panic(err)
 	}
+	// 设定会话的最大存活时间为 86400 秒（即一天），路径为根路径。
 	store.Options(sessions.Options{MaxAge: 86400, Path: "/"})
 	rs, err := redis.GetRedisStore(store)
 	if err == nil {
+		// 设置会话序列化器为 JSON 序列化器。
 		rs.SetSerializer(sessions.JSONSerializer{})
 	}
 	h.Use(sessions.New("cloudwego-shop", store))
 
-	// gzip
+	// 注册 Gzip 中间件，以此对响应数据进行压缩。
 	if conf.GetConf().Hertz.EnableGzip {
 		h.Use(gzip.Gzip(gzip.DefaultCompression))
 	}
 
-	// access log
+	// 注册访问日志中间件，用于记录访问日志。
 	if conf.GetConf().Hertz.EnableAccessLog {
 		h.Use(accesslog.New())
 	}
 
-	// recovery
+	// 注册恢复中间件，在处理请求时若出现 panic，该中间件可捕获并恢复
 	h.Use(recovery.Recovery())
 
+	// 把监控和追踪相关的关闭钩子添加到服务器的关闭钩子列表中，在服务器关闭时执行。
 	h.OnShutdown = append(h.OnShutdown, mtl.Hooks...)
 
-	// cores
+	// 注册 CORS 中间件，允许跨域请求。
 	h.Use(cors.Default())
-	middleware.RegisterMiddleware(h)
 }
+
+// 在 Go 语言里，.tmpl 文件一般是指使用 Go 模板引擎（text/template 或者 html/template）的模板文件。
+//
+// 变量声明：可以用 {{$var := .Field}} 来声明一个局部变量。例如
+// {{$name := .Name}}
+// Hello, {{$name}}!
+//
+// 使用 range 关键字进行循环操作。例如：
+// {{range .Items}}
+// <li>{{.}}</li>
+// {{end}}
+//
+// Go 模板支持调用函数。例如，内置函数 len 可以用来获取切片或者映射的长度：
+// The length of the list is {{len .Items}}.
+//
+// 使用 template 关键字嵌套其他模板。例如：
+// {{template "header.tmpl"}}
+// <p>Main content here.</p>
+// {{template "footer.tmpl"}}
+//
+// 使用管道（|）可以把一个函数的输出作为另一个函数的输入。例如：
+// {{.Name | upper}}
+
+// <img src="/static/image/logo.jpg" class="col-lg-4 col-sm-12" alt="...">
+// 在HTML中，alt 属性用于为图像提供替代文本。当图像无法正常显示时（例如网络问题、图像文件损坏、用户使用屏幕阅读器等辅助设备），alt 属性中的文本会显示出来，帮助用户理解图像的内容。
+
+// 在Go语言的模板语法里，{{ template "header" . }} 中的最后一个点 . 代表当前的上下文对象。
+// 在Go语言的模板语法里，$ 是一个特殊的变量，它代表的是根上下文对象。
+
+// <div class="form-check">
+// 	<input class="form-check-input" type="radio" name="payment" id="card" value="card" checked>
+// 	<label class="form-check-label" for="card">
+// 		Card
+// 	</label>
+// </div>
+// 在HTML里，for="email" 表示这个 <label> 标签与 id 属性为 email 的表单元素关联。当用户点击 <label> 标签时，与之关联的表单元素会获得焦点。
+// 在HTML里，type="email" 是 <input> 元素的一个属性值，它表明这个输入框专门用于输入电子邮件地址
+// name="email"：为输入框指定了一个名称 email，在提交表单时，该名称会作为表单数据的键，对应的值为用户输入的内容。
+// type="radio"：指定输入框的类型为单选框，name="payment"：所有单选框的 name 属性值相同，这意味着它们属于同一组，用户只能选择其中一个选项。checked：表示该选项默认被选中。部分选项还使用了 disabled 属性，这意味着这些选项当前不可用，用户无法选择它们。
+
+// <script src="xxx.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+// crossorigin 属性：设置跨域资源共享（CORS）的请求模式。anonymous 表示在请求资源时不发送用户的凭证（如 cookie 等）。
+// referrerpolicy 属性：指定在请求资源时如何发送引用信息。no-referrer 表示不发送引用信息。
+
+// <meta http-equiv="refresh" content="5;url=/checkout/result"/>
+// http-equiv 属性：模拟 HTTP 响应头，这里的值 refresh 表示该标签用于控制页面的刷新行为。
+// content 属性：具体定义了刷新的行为，它的值是一个分号分隔的字符串，包含两个部分。
+// 5：表示等待的时间，单位是秒。url=/checkout/result：指定了 5 秒后要跳转的目标 URL。
+
+// <button class="navbar-toggler" type="button"></button>
+// type="button"：指定按钮的类型为普通按钮，不会触发表单提交。
+
+// <a class="..." href="#" role="button"> Categories </a>
+// href="#"：设置链接的目标地址为空，因为这是一个触发按钮，不需要实际跳转。
+
+// <form class="d-flex ms-auto" role="search" action="/search" method="get">
+// role="search"：这是一个 ARIA（Accessible Rich Internet Applications）角色属性，用于告诉辅助设备（如屏幕阅读器）这个表单的用途是搜索。
+
+// <hr> 标签：在 HTML 里用于创建水平分隔线，通常用来分隔内容的不同部分
+
+// style="min-height:calc(100vh - 212px);"
+// 这是一个内联样式，让元素的最小高度等于视口高度减去 212px。vh 是视口高度（viewport height）的单位，100vh 表示整个视口的高度。
+
+// <h1> 表示最高级别的标题，通常用于页面的主标题，而 <h6> 则表示最低级别的标题，用于小标题或者次要的标题内容。
+
+// <input type="hidden" value="{{ .item.Id }}" name="productId">
+// type="hidden" 表明该输入框不会在页面上显示给用户，但它会随着表单一起提交。
+
+// <i> 是 HTML 标签，最初用于将文本显示为斜体。不过在 HTML5 中，它更多被用作图标容器
+
+// action="/auth/login{{ if .next }}?next={{.next}} {{ end}}"
+// next 是一个可选的查询参数。它的作用是在用户登录成功之后，将用户重定向到指定的页面。
+
+// 在CSS里，rem 是一个相对单位，它的大小取决于根元素（通常是 <html> 元素）的字体大小。2rem 意味着是根元素字体大小的2倍。

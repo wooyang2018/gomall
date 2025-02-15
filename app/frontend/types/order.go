@@ -14,9 +14,9 @@
 
 package types
 
+// Consignee 意思是收货人
 type Consignee struct {
-	Email string
-
+	Email         string
 	StreetAddress string
 	City          string
 	State         string

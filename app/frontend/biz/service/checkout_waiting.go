@@ -17,13 +17,14 @@ package service
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/checkout"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	rpccheckout "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
-	rpcpayment "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
+
+	bizutils "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/checkout"
+	comutils "github.com/cloudwego/biz-demo/gomall/common/utils"
+	rpccheckout "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout"
+	rpcpayment "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/payment"
 )
 
 type CheckoutWaitingService struct {
@@ -36,8 +37,8 @@ func NewCheckoutWaitingService(Context context.Context, RequestContext *app.Requ
 }
 
 func (h *CheckoutWaitingService) Run(req *checkout.CheckoutReq) (resp map[string]any, err error) {
-	userId := frontendutils.GetUserIdFromCtx(h.Context)
-	_, err = rpc.CheckoutClient.Checkout(h.Context, &rpccheckout.CheckoutReq{
+	userId := comutils.GetUserIdFromCtx(h.Context)
+	_, err = bizutils.CheckoutClient.Checkout(h.Context, &rpccheckout.CheckoutReq{
 		UserId:    userId,
 		Email:     req.Email,
 		Firstname: req.Firstname,

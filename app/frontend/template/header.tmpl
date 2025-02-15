@@ -30,7 +30,7 @@
                 <a class="navbar-brand" href="/">
                     <img src="/static/image/logo.jpg" style="height: 50px" alt=""> CloudWego Shop
                 </a>
-                <div class=" ms-lg-3 d-block d-lg-none d-xl-none">
+                <div class="ms-lg-3 d-block d-lg-none d-xl-none">
                     {{ template "cart-num" . }}
                 </div>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -64,7 +64,7 @@
                                     </li>
                                     <li>
                                         <form class="d-flex ms-auto" action="/auth/logout" method="post">
-                                        <button class="dropdown-item" type="submit">Logout</button>
+                                        	<button class="dropdown-item" type="submit">Logout</button>
                                         </form>
                                     </li>
                                 </ul>
@@ -83,12 +83,11 @@
             </div>
         </nav>
         <div class="bg-primary text-center text-white pt-1 pb-1">This website is hosted for demo purposes only. It is
-            not an
-            actual shop.
+            not an actual shop.
         </div>
         {{ if .error }}
             <div class="alert alert-danger text-center" role="alert">{{ .error }}</div>
-         {{ end }}
+        {{ end }}
         {{ if .warning }}
             <div class="alert alert-warning text-center" role="alert">{{ .warning }}</div>
         {{ end }}

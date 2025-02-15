@@ -18,13 +18,14 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/checkout"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
-	rpccart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
-	rpcproduct "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
+
+	bizutils "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/checkout"
+	comutils "github.com/cloudwego/biz-demo/gomall/common/utils"
+	rpccart "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart"
+	rpcproduct "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 )
 
 type CheckoutService struct {
@@ -38,15 +39,15 @@ func NewCheckoutService(Context context.Context, RequestContext *app.RequestCont
 
 func (h *CheckoutService) Run(req *checkout.CheckoutReq) (resp map[string]any, err error) {
 	var items []map[string]string
-	userId := frontendutils.GetUserIdFromCtx(h.Context)
+	userId := comutils.GetUserIdFromCtx(h.Context)
 
-	carts, err := rpc.CartClient.GetCart(h.Context, &rpccart.GetCartReq{UserId: userId})
+	carts, err := bizutils.CartClient.GetCart(h.Context, &rpccart.GetCartReq{UserId: userId})
 	if err != nil {
 		return nil, err
 	}
 	var total float32
 	for _, v := range carts.Cart.Items {
-		productResp, err := rpc.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{Id: v.ProductId})
+		productResp, err := bizutils.ProductClient.GetProduct(h.Context, &rpcproduct.GetProductReq{Id: v.ProductId})
 		if err != nil {
 			return nil, err
 		}

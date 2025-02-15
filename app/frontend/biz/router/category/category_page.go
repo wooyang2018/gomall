@@ -33,6 +33,7 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_category := root.Group("/category", _categoryMw()...)
+		// "/:category"：这是路由的路径，其中 :category 是一个路径参数，表示该部分可以匹配任意值。
 		_category.GET("/:category", append(_category0Mw(), category.Category)...)
 	}
 }

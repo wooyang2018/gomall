@@ -17,10 +17,10 @@ package service
 import (
 	"context"
 
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 
-	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
-	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
 )
 
 type CheckoutResultService struct {
@@ -32,6 +32,7 @@ func NewCheckoutResultService(Context context.Context, RequestContext *app.Reque
 	return &CheckoutResultService{RequestContext: RequestContext, Context: Context}
 }
 
+// TODO: /checkout/result [GET]
 func (h *CheckoutResultService) Run(req *common.Empty) (resp map[string]any, err error) {
 	return utils.H{}, nil
 }

@@ -21,11 +21,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
-/*
- This file will register all the routes of the services in the master idl.
- And it will update automatically when you use the "update" command for the idl.
- So don't modify the contents of the file, or your code will be deleted when it is updated.
-*/
+// 此文件将注册 master idl 中服务的所有路由。 当您对 idl 使用 “update” 命令时，它会自动更新。
+// 所以不要修改文件的内容，否则你的代码会在更新时被删除。
 
 // Register register routes based on the IDL 'api.${HTTP Method}' annotation.
 func Register(r *server.Hertz) {

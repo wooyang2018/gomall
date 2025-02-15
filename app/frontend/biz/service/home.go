@@ -17,12 +17,13 @@ package service
 import (
 	"context"
 
-	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/utils"
 	"github.com/cloudwego/kitex/pkg/klog"
+
+	bizutils "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product"
 )
 
 type HomeService struct {
@@ -36,11 +37,11 @@ func NewHomeService(Context context.Context, RequestContext *app.RequestContext)
 
 func (h *HomeService) Run(req *common.Empty) (res map[string]any, err error) {
 	ctx := h.Context
-	p, err := rpc.ProductClient.ListProducts(ctx, &product.ListProductsReq{})
+	p, err := bizutils.ProductClient.ListProducts(ctx, &product.ListProductsReq{})
 	if err != nil {
 		klog.Error(err)
 	}
-	var cartNum int
+	var cartNum int // TODO: 获取购物车数量
 	return utils.H{
 		"title":    "Hot sale",
 		"cart_num": cartNum,

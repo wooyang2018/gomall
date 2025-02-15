@@ -20,9 +20,8 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
 
+	bizutils "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/auth"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	frontendutils "github.com/cloudwego/biz-demo/gomall/app/frontend/utils"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	rpcuser "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 )
@@ -37,22 +36,23 @@ func NewLoginService(Context context.Context, RequestContext *app.RequestContext
 }
 
 func (h *LoginService) Run(req *auth.LoginReq) (resp string, err error) {
-	res, err := rpc.UserClient.Login(h.Context, &rpcuser.LoginReq{Email: req.Email, Password: req.Password})
+	res, err := bizutils.UserClient.Login(h.Context, &rpcuser.LoginReq{Email: req.Email, Password: req.Password})
 	if err != nil {
 		return
 	}
 
 	session := sessions.Default(h.RequestContext)
-	session.Set("user_id", res.UserId)
+	session.Set(utils.UserIdKey, res.UserId)
 	err = session.Save()
 	utils.MustHandleError(err)
-	redirect := "/"
-	if frontendutils.ValidateNext(req.Next) {
+
+	redirect := "/" // 默认重定向到首页
+	// 如果有 next 参数，重定向到 next 参数指定的页面
+	if utils.ValidateNext(req.Next) {
 		redirect = req.Next
 	}
 	if err != nil {
 		return "", err
 	}
-
 	return redirect, nil
 }

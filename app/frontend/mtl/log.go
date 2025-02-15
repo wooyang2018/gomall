@@ -23,17 +23,21 @@ import (
 	hertzzap "github.com/hertz-contrib/logger/zap"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/conf"
 )
 
 func initLog() {
 	var opts []hertzzap.Option
 	var output zapcore.WriteSyncer
 	if os.Getenv("GO_ENV") != "online" {
+		// 配置日志编码器，使其输出适合开发环境的易读格式。
 		opts = append(opts, hertzzap.WithCoreEnc(zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())))
 		output = os.Stdout
 	} else {
+		// 配置日志编码器，使其输出 JSON 格式的日志，便于机器解析。
 		opts = append(opts, hertzzap.WithCoreEnc(zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())))
-		// async log
+		// 实现异步日志写入，每隔一分钟刷新一次缓冲区。
 		output = &zapcore.BufferedWriteSyncer{
 			WS:            zapcore.AddSync(os.Stdout),
 			FlushInterval: time.Minute,
@@ -44,6 +48,6 @@ func initLog() {
 	}
 	log := hertzzap.NewLogger(opts...)
 	hlog.SetLogger(log)
-	hlog.SetLevel(hlog.LevelInfo)
+	hlog.SetLevel(conf.LogLevel())
 	hlog.SetOutput(output)
 }

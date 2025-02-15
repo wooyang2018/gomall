@@ -17,12 +17,14 @@ package service
 import (
 	"context"
 
-	auth "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/auth"
-	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/infra/rpc"
-	rpcuser "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
+
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/auth"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
+	comutils "github.com/cloudwego/biz-demo/gomall/common/utils"
+	rpcuser "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 )
 
 type RegisterService struct {
@@ -35,7 +37,7 @@ func NewRegisterService(Context context.Context, RequestContext *app.RequestCont
 }
 
 func (h *RegisterService) Run(req *auth.RegisterReq) (resp *common.Empty, err error) {
-	res, err := rpc.UserClient.Register(h.Context, &rpcuser.RegisterReq{
+	res, err := utils.UserClient.Register(h.Context, &rpcuser.RegisterReq{
 		Email:           req.Email,
 		Password:        req.Password,
 		ConfirmPassword: req.Password,
@@ -45,7 +47,8 @@ func (h *RegisterService) Run(req *auth.RegisterReq) (resp *common.Empty, err er
 	}
 
 	session := sessions.Default(h.RequestContext)
-	session.Set("user_id", res.UserId)
+	session.Set(comutils.UserIdKey, res.UserId)
+	// Save 方法会将会话数据持久化到存储后端（如内存、文件、Redis等）。
 	err = session.Save()
 	if err != nil {
 		return nil, err

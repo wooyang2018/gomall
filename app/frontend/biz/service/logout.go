@@ -17,9 +17,10 @@ package service
 import (
 	"context"
 
-	common "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/hertz-contrib/sessions"
+
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/common"
 )
 
 type LogoutService struct {
@@ -33,7 +34,7 @@ func NewLogoutService(Context context.Context, RequestContext *app.RequestContex
 
 func (h *LogoutService) Run(req *common.Empty) (resp *common.Empty, err error) {
 	session := sessions.Default(h.RequestContext)
-	session.Clear()
-	session.Save() //nolint:errcheck
+	session.Clear() // 清空会话数据
+	session.Save()  //nolint:errcheck
 	return
 }

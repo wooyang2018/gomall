@@ -3,40 +3,49 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-  args_bin = []
-  bin = "./tmp/main"
-  cmd = "go build -o ./tmp/main ."
-  delay = 0
-  exclude_dir = ["assets", "tmp", "vendor", "testdata"]
-  exclude_file = []
-  exclude_regex = ["_test.go"]
-  exclude_unchanged = false
-  follow_symlink = false
-  full_bin = ""
-  include_dir = []
-  include_ext = ["go", "tpl", "tmpl", "html", "gohtml"]
-  include_file = []
-  kill_delay = "4s"
-  log = "build-errors.log"
-  rerun = false
-  rerun_delay = 5000
-  send_interrupt = true
-  stop_on_error = false
+args_bin = []
+bin = "./tmp/main"
+cmd = "go build -o ./tmp/main ."
+delay = 0
+exclude_dir = ["assets", "tmp", "vendor", "testdata"]
+exclude_file = []
+exclude_regex = ["_test.go"]
+exclude_unchanged = false
+# true：当设置为 true 时，Air 在监控文件变化时会跟踪符号链接。也就是说，Air 会监控符号链接指向的实际文件或目录的变化，一旦这些实际文件或目录发生变化，就会触发重新构建和运行。
+# false：当设置为 false 时，Air 只会监控符号链接本身的变化，而不会跟踪其指向的实际文件或目录。这意味着即使符号链接指向的文件或目录发生了变化，只要符号链接本身没有改变，Air 就不会触发重新构建和运行。
+follow_symlink = false
+# 当你设置 full_bin = "" 时，意味着没有指定完整路径，Air 工具可能会使用默认规则或者其他配置项（像 bin 配置项）来确定可执行文件的位置。
+full_bin = ""
+include_dir = []
+include_ext = ["go", "tpl", "tmpl", "html", "gohtml"]
+include_file = []
+# kill_delay 配置项用于设置在发送中断信号（SIGINT）后，Air 等待程序自行关闭的时长。
+kill_delay = "4s"
+log = "build-errors.log"
+# rerun 是一个布尔类型的配置项。当设置为 true 时，若程序崩溃，Air 会自动尝试重新运行程序；当设置为 false 时，程序崩溃后 Air 不会自动重新运行，需手动干预。
+rerun = false
+rerun_delay = 5000
+# 当设置为 true 时，在重新构建和运行程序前，Air 会向当前正在运行的程序发送一个中断信号（SIGINT），让程序优雅地停止；当设置为 false 时，Air 会直接终止当前程序。
+send_interrupt = true
+# 当 stop_on_error = true 时，若构建过程中出现错误，Air 会停止自动重新构建和运行程序。你需要手动处理错误，待错误修复后，Air 才会继续监控文件变化并重新构建。
+# 当 stop_on_error = false 时，即便构建过程中出现错误，Air 也会持续监控文件变化，一旦有新的文件变动，它会再次尝试重新构建和运行程序。
+stop_on_error = false
 
 [color]
-  app = ""
-  build = "yellow"
-  main = "magenta"
-  runner = "green"
-  watcher = "cyan"
+app = ""
+build = "yellow"
+main = "magenta"
+runner = "green"
+watcher = "cyan"
 
 [log]
-  main_only = false
-  time = false
+main_only = false
+time = false
 
 [misc]
-  clean_on_exit = false
+clean_on_exit = false
 
 [screen]
-  clear_on_rebuild = false
-  keep_scroll = true
+clear_on_rebuild = false
+# 当 keep_scroll = true 时，在程序重新构建和运行之后，终端屏幕会保持当前的滚动位置。这意味着你在终端里查看之前的输出信息时，程序重新运行后不会把你当前的查看位置重置，你可以继续查看之前的输出。
+keep_scroll = true

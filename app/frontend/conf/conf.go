@@ -25,6 +25,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+const ServiceName = "frontend"
+
 var (
 	conf *Config
 	once sync.Once
@@ -78,8 +80,7 @@ func initConf() {
 	}
 
 	conf = new(Config)
-	err = yaml.Unmarshal(content, conf)
-	if err != nil {
+	if err := yaml.Unmarshal(content, conf); err != nil {
 		hlog.Error("parse yaml error - %v", err)
 		panic(err)
 	}
@@ -89,7 +90,6 @@ func initConf() {
 	}
 
 	conf.Env = GetEnv()
-
 	pretty.Printf("%+v\n", conf)
 }
 

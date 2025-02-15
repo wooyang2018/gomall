@@ -14,11 +14,24 @@
 
 package utils
 
-import "github.com/cloudwego/kitex/pkg/klog"
+import (
+	"context"
+
+	"github.com/cloudwego/kitex/pkg/klog"
+)
 
 // MustHandleError log the error info and then exit
 func MustHandleError(err error) {
 	if err != nil {
 		klog.Fatal(err)
 	}
+}
+
+const UserIdKey = "user_id"
+
+func GetUserIdFromCtx(ctx context.Context) uint32 {
+	if ctx.Value(UserIdKey) == nil {
+		return 0
+	}
+	return uint32(ctx.Value(UserIdKey).(float64))
 }

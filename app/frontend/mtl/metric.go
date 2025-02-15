@@ -36,12 +36,17 @@ import (
 var Registry *prometheus.Registry
 
 func initMetric() route.CtxCallback {
+	// 创建一个新的 Prometheus 注册表，用于管理所有的指标收集器。
 	Registry = prometheus.NewRegistry()
+	// 注册 Go 运行时的指标收集器，用于收集 Go 程序的运行时信息，如 goroutine 数量、内存使用等。
 	Registry.MustRegister(collectors.NewGoCollector())
+	// 注册进程级别的指标收集器，用于收集进程的信息，如 CPU 使用、内存使用等。
 	Registry.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+
 	config := consulapi.DefaultConfig()
 	config.Address = conf.GetConf().Hertz.RegistryAddr
 	consulClient, _ := consulapi.NewClient(config)
+	// 创建一个 Consul 服务注册器，并添加标签 service:frontend。
 	r := consul.NewConsulRegister(consulClient, consul.WithAdditionInfo(&consul.AdditionInfo{
 		Tags: []string{"service:frontend"},
 	}))
@@ -51,6 +56,7 @@ func initMetric() route.CtxCallback {
 	if err != nil {
 		hlog.Error(err)
 	}
+	// 创建一个服务注册信息，包含服务地址、服务名称和权重，并将服务注册到 Consul 注册中心。
 	registryInfo := &registry.Info{Addr: ip, ServiceName: "prometheus", Weight: 1}
 	err = r.Register(registryInfo)
 	if err != nil {
@@ -58,7 +64,9 @@ func initMetric() route.CtxCallback {
 	}
 
 	http.Handle("/metrics", promhttp.HandlerFor(Registry, promhttp.HandlerOpts{}))
+	// 启动一个 HTTP 服务器，监听指定的指标端口，用于提供 Prometheus 指标。
 	go http.ListenAndServe(fmt.Sprintf(":%d", conf.GetConf().Hertz.MetricsPort), nil) //nolint:errcheck
+
 	return func(ctx context.Context) {
 		r.Deregister(registryInfo) //nolint:errcheck
 	}

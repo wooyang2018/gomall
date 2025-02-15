@@ -17,11 +17,12 @@ package product
 import (
 	"context"
 
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/service"
-	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
-	product "github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/product"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/service"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/biz/utils"
+	"github.com/cloudwego/biz-demo/gomall/app/frontend/hertz_gen/frontend/product"
 )
 
 // GetProduct .
@@ -29,6 +30,7 @@ import (
 func GetProduct(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req product.ProductReq
+	// 使用 BindAndValidate 方法将客户端请求中的参数绑定到 req 对象上，并进行验证。
 	err = c.BindAndValidate(&req)
 	if err != nil {
 		utils.SendErrResponse(ctx, c, consts.StatusOK, err)
