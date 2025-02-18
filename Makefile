@@ -42,6 +42,10 @@ watch-svc: ## run {svc} server with air. example: make watch-svc svc=product
 run: ## run {svc} server. example: make run svc=product
 	@scripts/run.sh ${svc}
 
+.PHONY: run-all
+run-all: ## run all server and frontend
+	@scripts/run_all.sh
+
 #gofumpt：gofmt 的扩展工具，提供了更严格的代码格式化规则。
 #-l：列出需要格式化的文件，但不实际修改文件内容。
 #-w：将格式化后的内容写回源文件（即直接修改文件）。
@@ -104,18 +108,18 @@ clean: ## clern up all the tmp files
 
 ##@ Open Browser
 
-.PHONY: open.gomall
+.PHONY: open-gomall
 open-gomall: ## open `gomall` website in the default browser
-	@open "http://localhost:8080/"
+	@xdg-open "http://localhost:8080/"
 
-.PHONY: open.consul
+.PHONY: open-consul
 open-consul: ## open `consul ui` in the default browser
-	@open "http://localhost:8500/ui/"
+	@xdg-open "http://localhost:8500/ui/"
 
-.PHONY: open.jaeger
+.PHONY: open-jaeger
 open-jaeger: ## open `jaeger ui` in the default browser
-	@open "http://localhost:16686/search"
+	@xdg-open "http://localhost:16686/search"
 
-.PHONY: open.prometheus
+.PHONY: open-prometheus
 open-prometheus: ## open `prometheus ui` in the default browser
-	@open "http://localhost:9090"
+	@xdg-open "http://localhost:9090"

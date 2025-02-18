@@ -1,6 +1,9 @@
 # docker compose -f docker-compose-local.yaml down
 # 使用wsl2安装consul: https://developer.hashicorp.com/consul/install#linux
 # 以开发模式启动consul: consul agent -dev
+# 使用wsl2安装nats: curl -sf https://binaries.nats.dev/nats-io/nats-server/v2@latest | sh
+#                  mv nats-server $(go env GOPATH)/bin/
+# 以开发模式启动nats: nats-server
 version: '3'
 services:
   mysql:
@@ -17,8 +20,10 @@ services:
     ports:
       - 6379:6379
 
-  nats:
-    image: nats:latest
+  jaeger-all-in-one:
+    container_name: jaeger-all-in-one
+    image: jaegertracing/all-in-one:latest
     ports:
-      - "4222:4222"
-      - "8222:8222"
+      - "16686:16686" # 此端口用于访问 Jaeger 的 Web UI。
+      - "4317:4317" # 该端口用于接收使用 gRPC 协议发送的 OpenTelemetry 追踪数据。OpenTelemetry 是一个用于生成、收集和导出遥测数据（包括追踪、指标和日志）的开源项目，很多现代应用会使用 OpenTelemetry SDK 生成追踪数据，并通过 gRPC 协议将数据发送到 Jaeger 的收集器。
+      - "4318:4318" # 这个端口用于接收使用 HTTP 协议发送的 OpenTelemetry 追踪数据。

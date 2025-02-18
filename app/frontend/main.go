@@ -79,8 +79,8 @@ func main() {
 	h.Delims("{{", "}}")         // 设置模板的分隔符
 
 	h.Use(hertzoteltracing.ServerMiddleware(cfg)) // 使用 OpenTelemetry 中间件。
-	middleware.RegisterMiddleware(h)              // 注册 Auth 等自定义中间件
 	registerMiddleware(h)                         // 注册通用的第三方中间件
+	middleware.RegisterMiddleware(h)              // 注册 Auth 等自定义中间件
 	router.GeneratedRegister(h)                   // 注册IDL生成的路由
 
 	h.GET("/ping", func(c context.Context, ctx *app.RequestContext) {
