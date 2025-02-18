@@ -9,6 +9,8 @@ option go_package = "/frontend/about";
 
 service AboutService {
   rpc About(common.Empty) returns (common.Empty) {
+    // (api.post) 是一个自定义的选项，通常用于将 gRPC 方法映射到 HTTP POST 请求。
+    // 这个选项可能是在 api.proto 文件中定义的。
     option (api.post) = "/about";
   }
 }

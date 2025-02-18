@@ -8,6 +8,7 @@ import "frontend/common.proto";
 option go_package = "frontend/product";
 
 message ProductReq {
+  // api.query 指的是 HTTP GET 请求中的查询参数
   uint32 id = 1 [(api.query) = "id"];
 }
 

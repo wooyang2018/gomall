@@ -8,6 +8,7 @@ import "frontend/common.proto";
 option go_package = "/frontend/auth";
 
 message RegisterReq {
+  // [(api.form) = "email"] 是一个自定义选项，表明这个字段会从 HTTP 请求的表单数据里获取，且表单中的字段名是 email
   string email = 1 [(api.form) = "email"];
   string password = 2 [(api.form) = "password"];
   string confirm_password = 3 [(api.form) = "confirm_password"];
