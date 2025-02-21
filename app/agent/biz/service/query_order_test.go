@@ -2,8 +2,9 @@ package service
 
 import (
 	"context"
-	agent "github.com/cloudwego/biz-demo/gomall/app/agent/kitex_gen/agent"
 	"testing"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/agent"
 )
 
 func TestQueryOrder_Run(t *testing.T) {

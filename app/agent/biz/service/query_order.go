@@ -2,7 +2,8 @@ package service
 
 import (
 	"context"
-	agent "github.com/cloudwego/biz-demo/gomall/app/agent/kitex_gen/agent"
+
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/agent"
 )
 
 type QueryOrderService struct {

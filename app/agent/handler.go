@@ -2,8 +2,9 @@ package main
 
 import (
 	"context"
+
 	"github.com/cloudwego/biz-demo/gomall/app/agent/biz/service"
-	agent "github.com/cloudwego/biz-demo/gomall/app/agent/kitex_gen/agent"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/agent"
 )
 
 // AgentServiceImpl implements the last service interface defined in the IDL.
