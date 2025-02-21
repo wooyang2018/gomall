@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package agent;
+
+import "order.proto";
+
+option go_package = "/agent";
+
+service AgentService {
+  rpc QueryOrder(QueryOrderReq) returns (QueryOrderResp) {}
+}
+
+message QueryOrderReq {
+  uint32 user_id = 1;
+  string question = 2;
+}
+
+message QueryOrderResp {
+  repeated order.Order orders = 1;
+  string response = 2;
+}
