@@ -1,7 +1,8 @@
 kitex:
   service: "agent"
-  address: ":8888"
-  log_level: info
+  address: ":8883"
+  metrics_port: ":9993"
+  log_level: debug
   log_file_name: "log/kitex.log"
   log_max_size: 10
   log_max_age: 3
@@ -9,7 +10,7 @@ kitex:
 
 registry:
   registry_address:
-    - 127.0.0.1:2379
+    - 127.0.0.1:8500
   username: ""
   password: ""
 

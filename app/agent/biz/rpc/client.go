@@ -19,7 +19,7 @@ import (
 
 	"github.com/cloudwego/kitex/client"
 
-	"github.com/cloudwego/biz-demo/gomall/app/cart/conf"
+	"github.com/cloudwego/biz-demo/gomall/app/agent/conf"
 	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order/orderservice"
