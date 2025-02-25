@@ -18,6 +18,7 @@ package router
 
 import (
 	about "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router/about"
+	agent "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router/agent"
 	auth "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router/auth"
 	cart "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router/cart"
 	category "github.com/cloudwego/biz-demo/gomall/app/frontend/biz/router/category"
@@ -34,6 +35,8 @@ func GeneratedRegister(r *server.Hertz) {
 	about.Register(r)
 
 	order.Register(r)
+
+	agent.Register(r)
 
 	checkout.Register(r)
 

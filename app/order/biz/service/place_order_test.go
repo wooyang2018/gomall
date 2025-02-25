@@ -67,6 +67,7 @@ func TestPlaceOrder_Run(t *testing.T) {
 	}
 	if resp == nil {
 		t.Errorf("unexpected nil response")
+	} else {
+		fmt.Println("创建订单成功：", resp.Order)
 	}
-	fmt.Println("创建订单成功，", resp.Order)
 }

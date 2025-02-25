@@ -32,7 +32,7 @@ gen-frontend: ## gen frontend code
 
 .PHONY: watch-frontend
 watch-frontend: ## run frontend with air
-	@cd app/frontend && air
+	@cd app/frontend && GO_ENV=dev air
 
 .PHONY: watch-svc
 watch-svc: ## run {svc} server with air. example: make watch-svc svc=product
@@ -45,6 +45,10 @@ run: ## run {svc} server. example: make run svc=product
 .PHONY: run-all
 run-all: ## run all server and frontend
 	@scripts/run_all.sh
+
+.PHONY: stop-all
+stop-all: ## stop all server and frontend
+	@scripts/stop_all.sh
 
 #gofumpt：gofmt 的扩展工具，提供了更严格的代码格式化规则。
 #-l：列出需要格式化的文件，但不实际修改文件内容。

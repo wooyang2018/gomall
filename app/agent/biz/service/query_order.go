@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/cloudwego/biz-demo/gomall/app/agent/biz/rpc"
-	comutils "github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/agent"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order"
 )
@@ -20,8 +19,7 @@ func NewQueryOrderService(ctx context.Context) *QueryOrderService {
 }
 
 func (s *QueryOrderService) Run(req *agent.QueryOrderReq) (resp *agent.QueryOrderResp, err error) {
-	userId := comutils.GetUserIdFromCtx(s.ctx)
-	listOrderResp, err := rpc.OrderClient.ListOrder(s.ctx, &order.ListOrderReq{UserId: userId})
+	listOrderResp, err := rpc.OrderClient.ListOrder(s.ctx, &order.ListOrderReq{UserId: req.UserId})
 	if err != nil {
 		return nil, err
 	}

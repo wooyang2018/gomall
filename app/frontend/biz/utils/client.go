@@ -28,6 +28,7 @@ import (
 	"github.com/cloudwego/biz-demo/gomall/app/frontend/mtl"
 	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/agent/agentservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/cart/cartservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/checkout/checkoutservice"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order/orderservice"
@@ -42,6 +43,7 @@ var (
 	CartClient     cartservice.Client
 	CheckoutClient checkoutservice.Client
 	OrderClient    orderservice.Client
+	AgentClient    agentservice.Client
 
 	once         sync.Once
 	err          error
@@ -61,6 +63,7 @@ func InitClient() {
 		initCartClient()
 		initCheckoutClient()
 		initOrderClient()
+		initAgentClient()
 	})
 }
 
@@ -121,5 +124,10 @@ func initCheckoutClient() {
 
 func initOrderClient() {
 	OrderClient, err = orderservice.NewClient("order", commonSuite)
+	utils.MustHandleError(err)
+}
+
+func initAgentClient() {
+	AgentClient, err = agentservice.NewClient("agent", commonSuite)
 	utils.MustHandleError(err)
 }

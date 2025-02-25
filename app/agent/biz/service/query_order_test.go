@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
@@ -34,14 +35,22 @@ func init() {
 	rpc.InitClient()
 }
 
+// GO_ENV=dev go test -run TestQueryOrder_Run
 func TestQueryOrder_Run(t *testing.T) {
-	userId := int64(1)
+	userId := float64(2)
 	ctx := context.WithValue(context.Background(), utils.UserIdKey, userId)
 	s := NewQueryOrderService(ctx)
 
 	// init req and assert value
 	req := &agent.QueryOrderReq{}
 	resp, err := s.Run(req)
-	t.Logf("err: %v", err)
-	t.Logf("resp: %v", resp)
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+	if resp == nil {
+		t.Errorf("unexpected nil response")
+	} else {
+		fmt.Println("查询订单成功：", resp.Orders)
+		fmt.Println("订单详情描述：", resp.Response)
+	}
 }
