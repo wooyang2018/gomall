@@ -1,6 +1,6 @@
 module github.com/cloudwego/biz-demo/gomall/app/agent
 
-go 1.21
+go 1.23
 
 require (
 	github.com/cloudwego/eino v0.3.10

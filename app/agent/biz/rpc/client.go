@@ -23,10 +23,12 @@ import (
 	"github.com/cloudwego/biz-demo/gomall/common/clientsuite"
 	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/order/orderservice"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/product/productcatalogservice"
 )
 
 var (
-	OrderClient orderservice.Client
+	OrderClient   orderservice.Client
+	ProductClient productcatalogservice.Client
 
 	once         sync.Once
 	err          error
@@ -39,6 +41,7 @@ func InitClient() {
 		registryAddr = conf.GetConf().Registry.RegistryAddress[0]
 		serviceName = conf.GetConf().Kitex.Service
 		initOrderClient()
+		initProductClient()
 	})
 }
 
@@ -51,5 +54,16 @@ func initOrderClient() {
 	}
 
 	OrderClient, err = orderservice.NewClient("order", opts...)
+	utils.MustHandleError(err)
+}
+
+func initProductClient() {
+	opts := []client.Option{
+		client.WithSuite(clientsuite.CommonGrpcClientSuite{
+			RegistryAddr:       registryAddr,
+			CurrentServiceName: serviceName,
+		}),
+	}
+	ProductClient, err = productcatalogservice.NewClient("product", opts...)
 	utils.MustHandleError(err)
 }

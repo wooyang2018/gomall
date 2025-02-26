@@ -25,7 +25,7 @@ import (
 	"github.com/cloudwego/eino/schema"
 )
 
-func generate(ctx context.Context, llm model.ChatModel, in []*schema.Message) *schema.Message {
+func Generate(ctx context.Context, llm model.ChatModel, in []*schema.Message) *schema.Message {
 	result, err := llm.Generate(ctx, in)
 	if err != nil {
 		log.Fatalf("llm generate failed: %v", err)
@@ -33,7 +33,7 @@ func generate(ctx context.Context, llm model.ChatModel, in []*schema.Message) *s
 	return result
 }
 
-func stream(ctx context.Context, llm model.ChatModel, in []*schema.Message) *schema.StreamReader[*schema.Message] {
+func Stream(ctx context.Context, llm model.ChatModel, in []*schema.Message) *schema.StreamReader[*schema.Message] {
 	result, err := llm.Stream(ctx, in)
 	if err != nil {
 		log.Fatalf("llm generate failed: %v", err)
@@ -41,8 +41,8 @@ func stream(ctx context.Context, llm model.ChatModel, in []*schema.Message) *sch
 	return result
 }
 
-// reportStream 函数用于处理从 schema.StreamReader 接收的消息流。
-func reportStream(sr *schema.StreamReader[*schema.Message]) {
+// ReportStream 函数用于处理从 schema.StreamReader 接收的消息流。
+func ReportStream(sr *schema.StreamReader[*schema.Message]) {
 	defer sr.Close()
 
 	i := 0

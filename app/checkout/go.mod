@@ -1,6 +1,6 @@
 module github.com/cloudwego/biz-demo/gomall/app/checkout
 
-go 1.21
+go 1.23
 
 require (
 	github.com/cloudwego/kitex v0.11.3

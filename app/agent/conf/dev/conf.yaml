@@ -1,6 +1,6 @@
 kitex:
   service: "agent"
-  address: ":8887"
+  address: ":8888"
   metrics_port: ":9993"
   log_level: debug
   log_file_name: "log/kitex.log"
