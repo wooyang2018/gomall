@@ -19,8 +19,25 @@ package chat
 import (
 	"context"
 	"log"
+	"os"
 	"testing"
+
+	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	os.Chdir("..") //nolint:errcheck
+	os.Chdir("..") //nolint:errcheck
+	if _, err := os.Getwd(); err != nil {
+		klog.Error(err.Error())
+	}
+
+	// 加载环境变量文件
+	if err := godotenv.Load(); err != nil {
+		klog.Error(err.Error())
+	}
+}
 
 func TestChat(t *testing.T) {
 	ctx := context.Background()
@@ -30,10 +47,11 @@ func TestChat(t *testing.T) {
 	messages := createMessagesFromTemplate()
 	log.Printf("messages: %+v\n\n", messages)
 
-	// 创建llm
+	// 创建llm，三种语言模型任选其一
 	log.Printf("===create llm===\n")
-	cm := createOpenAIChatModel(ctx)
-	// cm := createOllamaChatModel(ctx)
+	cm := NewOpenAIChatModel(ctx)
+	cm = NewOllamaChatModel(ctx)
+	cm = NewArkChatModel(ctx, nil)
 	log.Printf("create llm success\n\n")
 
 	log.Printf("===llm generate===\n")

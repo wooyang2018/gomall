@@ -12,6 +12,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	github.com/cloudwego/eino-ext/components/model/ollama v0.0.0-20250110031740-2b102ddbf6ee
 	github.com/cloudwego/eino-ext/components/model/openai v0.0.0-20250114173536-ca9322ed9f9a
+	github.com/cloudwego/eino-ext/components/model/ark v0.0.0-20250117061805-cd80d1780d76
 )
 
 require (

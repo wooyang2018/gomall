@@ -18,6 +18,7 @@ package chat
 
 import (
 	"context"
+	"io"
 	"log"
 
 	"github.com/cloudwego/eino/components/model"
@@ -38,4 +39,22 @@ func stream(ctx context.Context, llm model.ChatModel, in []*schema.Message) *sch
 		log.Fatalf("llm generate failed: %v", err)
 	}
 	return result
+}
+
+// reportStream 函数用于处理从 schema.StreamReader 接收的消息流。
+func reportStream(sr *schema.StreamReader[*schema.Message]) {
+	defer sr.Close()
+
+	i := 0
+	for {
+		message, err := sr.Recv()
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			log.Fatalf("recv failed: %v", err)
+		}
+		log.Printf("message[%d]: %+v\n", i, message)
+		i++
+	}
 }
