@@ -53,6 +53,7 @@ func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error)
 	if err != nil {
 		return nil, err
 	}
+	auth.TokenString = token
 
 	return &user.LoginResp{
 		UserId: int32(userRow.ID),

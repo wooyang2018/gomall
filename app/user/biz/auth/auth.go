@@ -38,37 +38,23 @@ func ValidateToken(tokenString string) (jwt.MapClaims, error) {
 	return nil, fmt.Errorf("invalid token")
 }
 
-// 创建 Casbin Enforcer
-func NewEnforcer() (*casbin.Enforcer, error) {
-	// 加载模型文件
-	// m, err := model.NewModelFromString(`
-	//
-	// `)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// 加载策略文件
-	e, err := casbin.NewEnforcer("./model.conf", "./policy.csv")
-	if err != nil {
-		return nil, err
-	}
-
-	return e, nil
-}
+var TokenString string // 我们会优先解决框架层面的JWT Token传递问题，恢复使用标准的gRPC上下文传递机制
 
 // Kitex 中间件：认证和鉴权
-func AuthCasbinMiddleware(enforcer *casbin.Enforcer) endpoint.Middleware {
+func AuthCasbinMiddleware() endpoint.Middleware {
+	enforcer, err := casbin.NewEnforcer("./conf/model.conf", "./conf/policy.csv")
+	if err != nil {
+		panic(fmt.Sprintf("Failed to initialize Casbin Enforcer: %v", err))
+	}
 	return func(next endpoint.Endpoint) endpoint.Endpoint {
 		return func(ctx context.Context, req, resp interface{}) (err error) {
 			// 从上下文中获取 JWT
-			tokenString := ctx.Value("Authorization").(string)
-			if tokenString == "" {
-				return fmt.Errorf("authorization token is required")
+			if TokenString == "" {
+				return next(ctx, req, resp)
 			}
 
 			// 校验 JWT
-			claims, err := ValidateToken(tokenString)
+			claims, err := ValidateToken(TokenString)
 			if err != nil {
 				return fmt.Errorf("unauthorized: %v", err)
 			}
