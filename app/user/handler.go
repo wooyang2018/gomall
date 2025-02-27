@@ -18,7 +18,7 @@ import (
 	"context"
 
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/service"
-	user "github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
+	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.
@@ -34,6 +34,13 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.RegisterReq) (
 // Login implements the UserServiceImpl interface.
 func (s *UserServiceImpl) Login(ctx context.Context, req *user.LoginReq) (resp *user.LoginResp, err error) {
 	resp, err = service.NewLoginService(ctx).Run(req)
+
+	return resp, err
+}
+
+// Protected implements the UserServiceImpl interface.
+func (s *UserServiceImpl) Protected(ctx context.Context, req *user.ProtectedReq) (resp *user.ProtectedResp, err error) {
+	resp, err = service.NewProtectedService(ctx).Run(req)
 
 	return resp, err
 }

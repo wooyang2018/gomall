@@ -16,10 +16,12 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cloudwego/kitex/pkg/klog"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/cloudwego/biz-demo/gomall/app/user/biz/auth"
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
@@ -46,5 +48,14 @@ func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error)
 	if err != nil {
 		return
 	}
-	return &user.LoginResp{UserId: int32(userRow.ID)}, nil
+
+	token, err := auth.GenerateToken(fmt.Sprintf("%d", userRow.ID))
+	if err != nil {
+		return nil, err
+	}
+
+	return &user.LoginResp{
+		UserId: int32(userRow.ID),
+		Token:  token,
+	}, nil
 }
