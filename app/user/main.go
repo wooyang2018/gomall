@@ -23,7 +23,6 @@ import (
 	"github.com/joho/godotenv"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/auth"
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal"
 	"github.com/cloudwego/biz-demo/gomall/app/user/conf"
 	"github.com/cloudwego/biz-demo/gomall/common/mtl"
@@ -81,6 +80,5 @@ func kitexInit() (opts []server.Option) {
 		panic(err)
 	}
 	opts = append(opts, server.WithServiceAddr(addr), server.WithSuite(serversuite.CommonServerSuite{CurrentServiceName: serviceName, RegistryAddr: conf.GetConf().Registry.RegistryAddress[0]}))
-	opts = append(opts, server.WithMiddleware(auth.AuthCasbinMiddleware()))
 	return
 }

@@ -16,14 +16,15 @@ package service
 
 import (
 	"context"
-	"fmt"
+	"time"
 
 	"github.com/cloudwego/kitex/pkg/klog"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 
-	"github.com/cloudwego/biz-demo/gomall/app/user/biz/auth"
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/dal/mysql"
 	"github.com/cloudwego/biz-demo/gomall/app/user/biz/model"
+	"github.com/cloudwego/biz-demo/gomall/common/utils"
 	"github.com/cloudwego/biz-demo/gomall/rpc_gen/kitex_gen/user"
 )
 
@@ -49,14 +50,24 @@ func (s *LoginService) Run(req *user.LoginReq) (resp *user.LoginResp, err error)
 		return
 	}
 
-	token, err := auth.GenerateToken(fmt.Sprintf("%d", userRow.ID))
+	token, err := GenerateToken(userRow.ID)
 	if err != nil {
 		return nil, err
 	}
-	auth.TokenString = token
 
 	return &user.LoginResp{
 		UserId: int32(userRow.ID),
 		Token:  token,
 	}, nil
+}
+
+// 生成 JWT
+func GenerateToken(userID int) (string, error) {
+	claims := jwt.MapClaims{
+		utils.UserIdKey: userID,
+		utils.UserRole:  "user",
+		utils.JWTExpire: time.Now().Add(time.Hour).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(utils.JWTSecret))
 }

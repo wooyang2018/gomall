@@ -3,10 +3,12 @@ module github.com/cloudwego/biz-demo/gomall/app/frontend
 go 1.23
 
 require (
+	github.com/casbin/casbin/v2 v2.103.0
 	github.com/cloudwego/biz-demo/gomall/common v0.0.0-20250107114945-cd595cc0e3ad
 	github.com/cloudwego/biz-demo/gomall/rpc_gen v0.0.0-20250107114945-cd595cc0e3ad
 	github.com/cloudwego/hertz v0.7.3
 	github.com/cloudwego/kitex v0.11.3
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/hashicorp/consul/api v1.26.1
 	github.com/hertz-contrib/cors v0.1.0
 	github.com/hertz-contrib/gzip v0.0.3
@@ -38,11 +40,13 @@ require (
 	github.com/apache/thrift v0.19.0 // indirect
 	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.6.1 // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.11 // indirect
 	github.com/bytedance/gopkg v0.1.1 // indirect
 	github.com/bytedance/mockey v1.2.13 // indirect
 	github.com/bytedance/sonic v1.12.2 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
+	github.com/casbin/govaluate v1.3.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect

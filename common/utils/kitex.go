@@ -28,6 +28,10 @@ func MustHandleError(err error) {
 }
 
 const UserIdKey = "user_id"
+const UserToken = "user_token"
+const UserRole = "role"
+const JWTExpire = "expire"
+const JWTSecret = "your-secret-key" // JWT 签名密钥
 
 func GetUserIdFromCtx(ctx context.Context) uint32 {
 	if ctx.Value(UserIdKey) == nil {

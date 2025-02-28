@@ -1,0 +1,6 @@
+p, user, /cart, GET
+p, user, /cart, POST
+p, user, /order, GET
+p, user, /query/order, GET
+p, user, /checkout/*, GET
+p, user, /checkout/*, POST

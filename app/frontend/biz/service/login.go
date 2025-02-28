@@ -41,8 +41,11 @@ func (h *LoginService) Run(req *auth.LoginReq) (resp string, err error) {
 		return
 	}
 
+	// 特别注意 RequestContext *app.RequestContext 才是真正的请求上下文，从中可以获取 session
+	// 会话数据默认存储在客户端的Cookie中，session.Set 和 session.Save 用于设置会话数据并保存会话。
 	session := sessions.Default(h.RequestContext)
 	session.Set(utils.UserIdKey, res.UserId)
+	session.Set(utils.UserToken, res.Token)
 	err = session.Save()
 	utils.MustHandleError(err)
 
